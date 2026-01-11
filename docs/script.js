@@ -48,20 +48,12 @@ function renderTable() {
 // Render chart: Speed vs Size
 function renderChart() {
   const ctx = document.getElementById('perfChart').getContext('2d');
-  
-  // Destroy existing chart if it exists
-  if (window.perfChart) {
-    window.perfChart.destroy();
-  }
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   
   const validEntries = leaderboardData.filter(e => e.avg_tokens_per_sec > 0);
-  
-  // Handle empty data
   if (validEntries.length === 0) {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.font = '16px sans-serif';
-    ctx.fillStyle = '#666';
-    ctx.fillText('No valid benchmark data to display', 10, 30);
+    ctx.fillText('No valid benchmark data', 10, 30);
     return;
   }
 
@@ -69,10 +61,7 @@ function renderChart() {
     labels: validEntries.map(e => e.model_name),
     datasets: [{
       label: 'Tokens per Second',
-      data: validEntries.map(e => ({
-        x: e.file_size_mb,
-        y: e.avg_tokens_per_sec
-      })),
+       validEntries.map(e => ({ x: e.file_size_mb, y: e.avg_tokens_per_sec })),
       backgroundColor: 'rgba(52, 152, 219, 0.6)',
       borderColor: 'rgba(41, 128, 185, 1)',
       borderWidth: 1,
@@ -82,30 +71,19 @@ function renderChart() {
   
   window.perfChart = new Chart(ctx, {
     type: 'scatter',
-    data: data,
+     data,
     options: {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: {
-          title: { display: true, text: 'Model Size (MB)' },
-          beginAtZero: true
-        },
-        y: {
-          title: { display: true, text: 'Speed (tokens/sec)' },
-          beginAtZero: true
-        }
+        x: { title: { display: true, text: 'Model Size (MB)' }, beginAtZero: true },
+        y: { title: { display: true, text: 'Speed (tokens/sec)' }, beginAtZero: true }
       },
       plugins: {
         tooltip: {
           callbacks: {
-            label: function(context) {
-              return `${context.dataset.label}: ${context.parsed.y.toFixed(2)} t/s`;
-            },
-            afterLabel: function(context) {
-              const idx = context.dataIndex;
-              return `Size: ${validEntries[idx].file_size_mb.toFixed(1)} MB`;
-            }
+            label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} t/s`,
+            afterLabel: ctx => `Size: ${validEntries[ctx.dataIndex].file_size_mb.toFixed(1)} MB`
           }
         },
         legend: { display: false }
