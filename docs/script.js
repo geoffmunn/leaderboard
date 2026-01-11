@@ -57,6 +57,7 @@ function renderChart() {
     return;
   }
 
+  console.log("validEntries: ", validEntries);
   const data = {
     labels: validEntries.map(e => e.model_name),
     datasets: [{
