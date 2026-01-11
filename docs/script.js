@@ -61,7 +61,7 @@ function renderChart() {
     labels: validEntries.map(e => e.model_name),
     datasets: [{
       label: 'Tokens per Second',
-      validEntries.map(e => ({ x: e.file_size_mb, y: e.avg_tokens_per_sec })),
+      data: validEntries.map(e => ({ x: e.file_size_mb, y: e.avg_tokens_per_sec })),
       backgroundColor: 'rgba(52, 152, 219, 0.6)',
       borderColor: 'rgba(41, 128, 185, 1)',
       borderWidth: 1,
