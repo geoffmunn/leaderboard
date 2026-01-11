@@ -45,14 +45,10 @@ function renderTable() {
       <td>${entry.parameters || 'N/A'}</td>
       <td>${entry.file_size_mb?.toFixed(1) || 'N/A'}</td>
       <td>${speed.toFixed(2)}</td>
+      <td>${entry.perplexity ? entry.perplexity.toFixed(2) : 'N/A'}</td>
       <td>${entry.peak_memory_mb?.toFixed(1) || 'N/A'}</td>
-      <td>
-        <small>
-          ${entry.system_info?.device || 'N/A'} • 
-          ${entry.system_info?.ram || 'N/A'}<br>
-          <code>${entry.system_info?.cpu || 'N/A'}</code>
-        </small>
-      </td>
+      <td>${entry.system_info?.device || 'N/A'}</td>
+      <td>${entry.system_info?.ram_gb || 'N/A'}</td>
       <td>${formatDate(entry.date_checked)}</td>
     `;
     
@@ -126,8 +122,10 @@ function sortTable(colIndex) {
       case 1: aVal = a.parameters || ''; bVal = b.parameters || ''; break;
       case 2: aVal = a.file_size_mb || 0; bVal = b.file_size_mb || 0; break;
       case 3: aVal = a.avg_tokens_per_sec || 0; bVal = b.avg_tokens_per_sec || 0; break;
-      case 4: aVal = a.peak_memory_mb || 0; bVal = b.peak_memory_mb || 0; break;
-      case 5: // Date Checked
+      case 4: aVal = a.perplexity || 999; bVal = b.perplexity || 999; break; // Lower PPL = better
+      case 5: aVal = a.peak_memory_mb || 0; bVal = b.peak_memory_mb || 0; break;
+      case 6: aVal = a.system_info?.ram_gb || 0; bVal = b.system_info?.ram_gb || 0; break;
+      case 7: // Date Checked
         aVal = new Date(a.date_checked || 0).getTime();
         bVal = new Date(b.date_checked || 0).getTime();
         break;

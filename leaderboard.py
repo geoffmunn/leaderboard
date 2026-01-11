@@ -4,11 +4,14 @@ Quantized Model Leaderboard for llama.cpp — Non-Interactive Benchmark
 
 Features:
 - Tokens/sec from TTY output
-- Peak RAM usage
-- Accurate parameter count via GGUF metadata
-- Hardware detection (Raspberry Pi, RAM, CPU, OS)
-- Saves to ./docs/leaderboard.json (relative path!)
+- Peak RAM usage (runtime)
+- System RAM (GB) as separate column
+- Perplexity (always measured)
+- Accurate parameter count via GGUF metadata (new API)
+- Hardware detection (Raspberry Pi, CPU, OS)
+- Saves to ./docs/leaderboard.json
 - Includes "Date Checked" timestamp
+- Optional GitHub auto-upload
 """
 
 import argparse
@@ -61,21 +64,21 @@ def get_model_size_mb(model_path: str) -> float:
     return os.path.getsize(model_path) / (1024 * 1024)
 
 def extract_parameters_from_gguf(model_path: str) -> str:
-    """Extract parameter count from GGUF metadata."""
+    """Extract parameter count from GGUF metadata (new API)."""
     if not GGUF_AVAILABLE:
         return None
     try:
         reader = GGUFReader(model_path)
-        for kv in reader.metadata_kv:
-            if kv.key == "general.parameter_count":
-                count = kv.value
-                if isinstance(count, int):
-                    if count >= 10**9:
-                        return f"{count / 1e9:.1f}B"
-                    elif count >= 10**6:
-                        return f"{count / 1e6:.1f}M"
-                    else:
-                        return f"{count}"
+        # New API: use .fields dictionary
+        if "general.parameter_count" in reader.fields:
+            count = reader.fields["general.parameter_count"].parts[-1]
+            if isinstance(count, int):
+                if count >= 10**9:
+                    return f"{count / 1e9:.1f}B"
+                elif count >= 10**6:
+                    return f"{count / 1e6:.1f}M"
+                else:
+                    return f"{count}"
         return None
     except Exception as e:
         print(f"GGUF metadata read error: {e}", file=sys.stderr)
@@ -102,7 +105,7 @@ def extract_parameters_from_name(model_name: str) -> str:
     return "Unknown"
 
 def detect_hardware_info():
-    """Detect hardware info."""
+    """Detect hardware info with separate RAM value."""
     try:
         device = "Unknown Device"
         machine = platform.machine().lower()
@@ -125,18 +128,18 @@ def detect_hardware_info():
         cpu_model = platform.processor() or "Unknown"
         cpu_info = f"{cpu_count}x {cpu_model}"
         
+        # Get numeric RAM value (GB)
+        ram_gb = 0.0
         if PSUTIL_AVAILABLE:
             ram_gb = psutil.virtual_memory().total / (1024**3)
-            ram_info = f"{ram_gb:.1f} GB RAM"
-        else:
-            ram_info = "RAM unknown"
         
         os_info = f"{system} {platform.release()}"
         
         return {
             "device": device,
             "cpu": cpu_info,
-            "ram": ram_info,
+            "ram_gb": round(ram_gb, 1),      # ← Numeric value for sorting
+            "ram_human": f"{ram_gb:.1f} GB RAM",  # ← Human-readable
             "os": os_info
         }
     except Exception as e:
@@ -275,7 +278,7 @@ def benchmark_model(
     batch_size: int = 512,
     gpu_layers: int = 0,
     use_mlock: bool = False,
-    include_ppl: bool = False
+    include_ppl: bool = True  # Always include PPL now
 ) -> dict:
     print(f"Benchmarking {os.path.basename(model_path)}...")
     
@@ -312,31 +315,31 @@ def benchmark_model(
     memory_vals = [r["peak_memory_mb"] for r in results if r["peak_memory_mb"] is not None]
     peak_memory_mb = max(memory_vals) if memory_vals else None
 
+    # ALWAYS calculate perplexity (critical for quant evaluation)
     ppl_score = None
-    if include_ppl and valid_runs > 0:
-        print("  Calculating perplexity...", end="", flush=True)
-        try:
-            cmd = [
-                "./build/bin/llama-cli",
-                "-m", model_path,
-                "--ppl-str", PPL_PROMPT,
-                "-n", "0",
-                "-c", str(ctx_size),
-                "--threads", str(threads),
-                "--batch-size", str(batch_size),
-                "--gpu-layers", str(gpu_layers),
-            ]
-            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            for line in result.stderr.splitlines():
-                if "perplexity" in line.lower():
-                    try:
-                        ppl_score = float(line.split()[-1])
-                        break
-                    except (ValueError, IndexError):
-                        pass
-            print(f" {ppl_score:.2f}" if ppl_score else " N/A")
-        except Exception as e:
-            print(f" PPL ERROR: {e}")
+    print("  Calculating perplexity...", end="", flush=True)
+    try:
+        cmd = [
+            "./build/bin/llama-cli",
+            "-m", model_path,
+            "--ppl-str", PPL_PROMPT,
+            "-n", "0",
+            "-c", str(ctx_size),
+            "--threads", str(threads),
+            "--batch-size", str(batch_size),
+            "--gpu-layers", str(gpu_layers),
+        ]
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        for line in result.stderr.splitlines():
+            if "perplexity" in line.lower():
+                try:
+                    ppl_score = float(line.split()[-1])
+                    break
+                except (ValueError, IndexError):
+                    pass
+        print(f" {ppl_score:.2f}" if ppl_score else " N/A")
+    except Exception as e:
+        print(f" PPL ERROR: {e}")
 
     model_name = os.path.basename(model_path)
     
@@ -351,11 +354,11 @@ def benchmark_model(
         "parameters": parameters,
         "file_size_mb": get_model_size_mb(model_path),
         "avg_tokens_per_sec": avg_tps,
+        "perplexity": ppl_score,  # ← FIXED TYPO
         "peak_memory_mb": peak_memory_mb,
         "total_exec_time_sec": sum(r["exec_time_sec"] for r in results if r["exec_time_sec"] is not None),
         "per_prompt_results": results,
-        "perplexity": ppl_score,
-        "date_checked": datetime.now().isoformat(),  # ← NEW: ISO timestamp
+        "date_checked": datetime.now().isoformat(),
         "hardware_config": {
             "threads": threads,
             "ctx_size": ctx_size,
@@ -373,7 +376,6 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
         print(f"ERROR: Cannot create directory for '{leaderboard_path}': {e}", file=sys.stderr)
         sys.exit(1)
     
-    # Load existing leaderboard
     leaderboard = []
     if os.path.exists(leaderboard_path):
         try:
@@ -382,16 +384,12 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
         except json.JSONDecodeError:
             print(f"WARNING: Corrupted leaderboard.json. Starting fresh.", file=sys.stderr)
     
-    # Remove any existing entry with the SAME MODEL PATH (prevents duplicates)
+    # Remove existing entry with same model_path (prevent duplicates)
     leaderboard = [entry for entry in leaderboard if entry["model_path"] != new_result["model_path"]]
-    
-    # Add the new (or updated) result
     leaderboard.append(new_result)
-    
-    # Sort by performance (tokens/sec descending)
     leaderboard.sort(key=lambda x: x.get("avg_tokens_per_sec", 0), reverse=True)
     
-    # Save atomically (prevent corruption on crash)
+    # Atomic write
     temp_path = leaderboard_path + ".tmp"
     with open(temp_path, 'w') as f:
         json.dump(leaderboard, f, indent=2)
@@ -399,28 +397,76 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
     
     print(f"\nLeaderboard saved to {os.path.abspath(leaderboard_path)}")
 
+def upload_to_github():
+    """Commit and push ONLY docs/leaderboard.json to GitHub."""
+    try:
+        # Verify we're in a git repo
+        subprocess.run(["git", "rev-parse", "--git-dir"], 
+                      check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Configure git user if missing
+        try:
+            subprocess.run(["git", "config", "user.name"], 
+                          check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            subprocess.run(["git", "config", "user.name", "QuantBoard Bot"])
+            subprocess.run(["git", "config", "user.email", "quantboard@users.noreply.github.com"])
+        
+        # Check if leaderboard.json exists
+        if not os.path.exists("docs/leaderboard.json"):
+            print("⚠️ docs/leaderboard.json not found. Skipping upload.")
+            return
+        
+        # Check if file has changed
+        result = subprocess.run(
+            ["git", "diff", "--quiet", "docs/leaderboard.json"],
+            capture_output=True
+        )
+        if result.returncode == 0:
+            print("ℹ️ No changes to docs/leaderboard.json. Skipping upload.")
+            return
+        
+        # Stage ONLY the leaderboard file
+        subprocess.run(["git", "add", "docs/leaderboard.json"], check=True)
+        
+        # Commit with specific message
+        commit_msg = f"Update leaderboard: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+        
+        # Push ONLY the current branch
+        subprocess.run(["git", "push"], check=True)
+        print("✅ Leaderboard uploaded to GitHub!")
+        
+    except subprocess.CalledProcessError as e:
+        error_msg = e.stderr.decode().strip() if e.stderr else str(e)
+        if "Authentication failed" in error_msg or "Permission denied" in error_msg:
+            print("⚠️ GitHub authentication failed!", file=sys.stderr)
+            print("   Configure SSH keys or a Personal Access Token.", file=sys.stderr)
+        else:
+            print(f"⚠️ Git error: {error_msg}", file=sys.stderr)
+    except FileNotFoundError:
+        print("⚠️ Git not installed. Skipping GitHub upload.", file=sys.stderr)
+
 def print_summary(result: dict):
     print("\n" + "="*60)
     print(f"MODEL: {result['model_name']} ({result['parameters']})")
     print(f"Size: {result['file_size_mb']:.1f} MB")
     print(f"Speed: {result['avg_tokens_per_sec']:.2f} tokens/sec")
+    print(f"Perplexity: {result['perplexity']:.2f}" if result['perplexity'] else "Perplexity: N/A")
     if result['peak_memory_mb']:
         print(f"Peak RAM: {result['peak_memory_mb']:.1f} MB")
-    if result['perplexity']:
-        print(f"Perplexity: {result['perplexity']:.2f}")
     cfg = result['hardware_config']
     print(f"Config: threads={cfg['threads']}, ctx={cfg['ctx_size']}, gpu={cfg['gpu_layers']}")
     sys_info = result['system_info']
     print(f"Hardware: {sys_info.get('device', 'N/A')}")
-    print(f"          {sys_info.get('ram', 'N/A')} • {sys_info.get('cpu', 'N/A')}")
+    print(f"          System RAM: {sys_info.get('ram_human', 'N/A')} • CPU: {sys_info.get('cpu', 'N/A')}")
     print(f"Date Checked: {result['date_checked']}")
     print("="*60)
 
 def main():
     parser = argparse.ArgumentParser(description="Non-interactive quantized model benchmark for llama.cpp")
     parser.add_argument("model_path", help="Path to GGUF model file")
-    # FIXED: Use relative path 'docs/leaderboard.json' instead of '/docs/...'
-    parser.add_argument("--leaderboard", default="docs/leaderboard.json", help="Output JSON file (default: docs/leaderboard.json)")
+    parser.add_argument("--leaderboard", default="docs/leaderboard.json", help="Output JSON file")
     parser.add_argument("--prompts", nargs="*", help="Custom prompts")
     parser.add_argument("--n-predict", type=int, default=128, help="Tokens to generate")
     parser.add_argument("--ctx-size", type=int, default=2048, help="Context size")
@@ -428,7 +474,7 @@ def main():
     parser.add_argument("--batch-size", type=int, default=512, help="Batch size")
     parser.add_argument("--gpu-layers", type=int, default=0, help="GPU offload layers")
     parser.add_argument("--mlock", action="store_true", help="Lock model in RAM")
-    parser.add_argument("--ppl", action="store_true", help="Include perplexity")
+    parser.add_argument("--no-upload", action="store_true", help="Skip GitHub upload")
     parser.add_argument("--no-save", action="store_true", help="Skip saving to leaderboard")
 
     args = parser.parse_args()
@@ -451,14 +497,15 @@ def main():
         threads=args.threads,
         batch_size=args.batch_size,
         gpu_layers=args.gpu_layers,
-        use_mlock=args.mlock,
-        include_ppl=args.ppl
+        use_mlock=args.mlock
     )
 
     print_summary(result)
 
     if not args.no_save:
         save_leaderboard(args.leaderboard, result)
+        if not args.no_upload:
+            upload_to_github()
 
     print("\n✅ Benchmark completed successfully!")
 
