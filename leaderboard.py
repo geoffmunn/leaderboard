@@ -368,27 +368,35 @@ def benchmark_model(
 
 def save_leaderboard(leaderboard_path: str, new_result: dict):
     try:
-        # Create directory if it doesn't exist (relative path safe!)
         os.makedirs(os.path.dirname(leaderboard_path), exist_ok=True)
-    except PermissionError:
-        print(f"ERROR: Cannot create directory '{os.path.dirname(leaderboard_path)}'", file=sys.stderr)
-        print("Please ensure you have write permissions or use a different path.", file=sys.stderr)
+    except (PermissionError, FileNotFoundError) as e:
+        print(f"ERROR: Cannot create directory for '{leaderboard_path}': {e}", file=sys.stderr)
         sys.exit(1)
-    except FileNotFoundError:
-        # Handle case where path has no directory (e.g., "leaderboard.json")
-        pass
     
+    # Load existing leaderboard
     leaderboard = []
     if os.path.exists(leaderboard_path):
-        with open(leaderboard_path, 'r') as f:
-            leaderboard = json.load(f)
+        try:
+            with open(leaderboard_path, 'r') as f:
+                leaderboard = json.load(f)
+        except json.JSONDecodeError:
+            print(f"WARNING: Corrupted leaderboard.json. Starting fresh.", file=sys.stderr)
     
-    leaderboard = [e for e in leaderboard if e["model_path"] != new_result["model_path"]]
+    # Remove any existing entry with the SAME MODEL PATH (prevents duplicates)
+    leaderboard = [entry for entry in leaderboard if entry["model_path"] != new_result["model_path"]]
+    
+    # Add the new (or updated) result
     leaderboard.append(new_result)
+    
+    # Sort by performance (tokens/sec descending)
     leaderboard.sort(key=lambda x: x.get("avg_tokens_per_sec", 0), reverse=True)
     
-    with open(leaderboard_path, 'w') as f:
+    # Save atomically (prevent corruption on crash)
+    temp_path = leaderboard_path + ".tmp"
+    with open(temp_path, 'w') as f:
         json.dump(leaderboard, f, indent=2)
+    os.replace(temp_path, leaderboard_path)
+    
     print(f"\nLeaderboard saved to {os.path.abspath(leaderboard_path)}")
 
 def print_summary(result: dict):
