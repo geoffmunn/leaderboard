@@ -49,11 +49,22 @@ function renderTable() {
 function renderChart() {
   const ctx = document.getElementById('perfChart').getContext('2d');
   
-  // Destroy existing chart if any
-  if (window.perfChart) window.perfChart.destroy();
+  // Destroy existing chart if it exists
+  if (window.perfChart) {
+    window.perfChart.destroy();
+  }
   
   const validEntries = leaderboardData.filter(e => e.avg_tokens_per_sec > 0);
   
+  // Handle empty data
+  if (validEntries.length === 0) {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.font = '16px sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.fillText('No valid benchmark data to display', 10, 30);
+    return;
+  }
+
   const data = {
     labels: validEntries.map(e => e.model_name),
     datasets: [{
@@ -132,10 +143,14 @@ function sortTable(colIndex) {
   
   sortDir *= -1;
   renderTable();
+  renderChart(); // Re-render chart after sorting (optional)
 }
 
 // Event listeners
-document.getElementById('hide-failed').addEventListener('change', renderTable);
+document.getElementById('hide-failed').addEventListener('change', () => {
+  renderTable();
+  renderChart();
+});
 document.getElementById('refresh').addEventListener('click', loadLeaderboard);
 
 // Initialize
