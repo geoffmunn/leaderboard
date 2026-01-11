@@ -2,13 +2,13 @@
 """
 Quantized Model Leaderboard for llama.cpp — Non-Interactive Benchmark
 
-Captures:
-- Tokens/sec (from TTY output)
+Features:
+- Tokens/sec from TTY output
 - Peak RAM usage
-- Model parameter count (e.g., 0.6B)
-- Hardware info (Raspberry Pi, RAM, CPU, OS)
-
-Tested with custom quants (Q3_K_HIFI) and llama.cpp build b7548.
+- Accurate parameter count via GGUF metadata
+- Hardware detection (Raspberry Pi, RAM, CPU, OS)
+- Saves to ./docs/leaderboard.json (relative path!)
+- Includes "Date Checked" timestamp
 """
 
 import argparse
@@ -21,15 +21,22 @@ import select
 import subprocess
 import platform
 import re
+from datetime import datetime
 
-# Try to import psutil for memory monitoring
+# Try to import optional dependencies
 try:
     import psutil
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
     print("Warning: 'psutil' not installed. Peak memory will not be recorded.", file=sys.stderr)
-    print("Install with: pip install psutil", file=sys.stderr)
+
+try:
+    from gguf import GGUFReader
+    GGUF_AVAILABLE = True
+except ImportError:
+    GGUF_AVAILABLE = False
+    print("Warning: 'gguf' not installed. Using filename-based parameter detection.", file=sys.stderr)
 
 # Representative prompts
 PROMPTS = [
@@ -53,20 +60,38 @@ PPL_PROMPT = (
 def get_model_size_mb(model_path: str) -> float:
     return os.path.getsize(model_path) / (1024 * 1024)
 
+def extract_parameters_from_gguf(model_path: str) -> str:
+    """Extract parameter count from GGUF metadata."""
+    if not GGUF_AVAILABLE:
+        return None
+    try:
+        reader = GGUFReader(model_path)
+        for kv in reader.metadata_kv:
+            if kv.key == "general.parameter_count":
+                count = kv.value
+                if isinstance(count, int):
+                    if count >= 10**9:
+                        return f"{count / 1e9:.1f}B"
+                    elif count >= 10**6:
+                        return f"{count / 1e6:.1f}M"
+                    else:
+                        return f"{count}"
+        return None
+    except Exception as e:
+        print(f"GGUF metadata read error: {e}", file=sys.stderr)
+        return None
+
 def extract_parameters_from_name(model_name: str) -> str:
-    """Extract parameter count from model name (e.g., 'Qwen3-0.6B' -> '0.6B')."""
-    # Remove extension
+    """Fallback: extract from filename."""
     base_name = os.path.splitext(model_name)[0]
-    # Common patterns: Qwen3-0.6B, Mistral-7B, Phi-3-3.8B, etc.
     match = re.search(r'(\d+\.?\d*[BbMm])', base_name)
     if match:
-        return match.group(1).upper().replace('M', 'M').replace('B', 'B')
-    # Fallback heuristics
+        return match.group(1).upper()
     if any(x in base_name for x in ['0.5', '0.6', 'tiny']):
         return "0.6B"
     elif '1.5' in base_name:
         return "1.5B"
-    elif '3' in base_name and '7' not in base_name and '13' not in base_name:
+    elif '3' in base_name and not any(x in base_name for x in ['7', '13', '34']):
         return "3B"
     elif '7' in base_name:
         return "7B"
@@ -77,15 +102,13 @@ def extract_parameters_from_name(model_name: str) -> str:
     return "Unknown"
 
 def detect_hardware_info():
-    """Detect hardware info (device, CPU, RAM, OS)."""
+    """Detect hardware info."""
     try:
-        # Device type
         device = "Unknown Device"
         machine = platform.machine().lower()
         system = platform.system()
         
         if "aarch64" in machine or "arm" in machine:
-            # Raspberry Pi detection
             if os.path.exists("/proc/device-tree/model"):
                 with open("/proc/device-tree/model", "r") as f:
                     device = f.read().strip().replace("\x00", "")
@@ -98,27 +121,23 @@ def detect_hardware_info():
         else:
             device = f"{system} PC"
         
-        # CPU info
         cpu_count = os.cpu_count() or 1
         cpu_model = platform.processor() or "Unknown"
         cpu_info = f"{cpu_count}x {cpu_model}"
         
-        # RAM
         if PSUTIL_AVAILABLE:
             ram_gb = psutil.virtual_memory().total / (1024**3)
             ram_info = f"{ram_gb:.1f} GB RAM"
         else:
             ram_info = "RAM unknown"
         
-        # OS
         os_info = f"{system} {platform.release()}"
         
         return {
             "device": device,
             "cpu": cpu_info,
             "ram": ram_info,
-            "os": os_info,
-            "timestamp": time.time()
+            "os": os_info
         }
     except Exception as e:
         return {"error": str(e)}
@@ -134,7 +153,7 @@ def run_llama_cli(
     use_mlock: bool = False,
     ppl_mode: bool = False
 ) -> dict:
-    """Run llama-cli in a PTY and monitor memory with psutil."""
+    """Run llama-cli in a PTY."""
     cmd = [
         "./build/bin/llama-cli",
         "-m", model_path,
@@ -158,7 +177,6 @@ def run_llama_cli(
     full_output = ""
     peak_memory_mb = None
 
-    # Launch in PTY
     pid, fd = pty.fork()
     if pid == 0:
         os.execvp(cmd[0], cmd)
@@ -205,7 +223,6 @@ def run_llama_cli(
 
     exec_time = time.time() - start_time
 
-    # Parse tokens/sec from TTY output
     tokens_per_sec = None
     for line in full_output.splitlines():
         if "Generation:" in line and "t/s" in line:
@@ -217,7 +234,6 @@ def run_llama_cli(
             except (ValueError, IndexError):
                 continue
 
-    # Extract generated text
     output_text = ""
     if not ppl_mode:
         lines = full_output.splitlines()
@@ -293,11 +309,9 @@ def benchmark_model(
 
     avg_tps = total_tps / valid_runs if valid_runs > 0 else 0.0
 
-    # Safely compute peak memory
     memory_vals = [r["peak_memory_mb"] for r in results if r["peak_memory_mb"] is not None]
     peak_memory_mb = max(memory_vals) if memory_vals else None
 
-    # Perplexity
     ppl_score = None
     if include_ppl and valid_runs > 0:
         print("  Calculating perplexity...", end="", flush=True)
@@ -325,17 +339,23 @@ def benchmark_model(
             print(f" PPL ERROR: {e}")
 
     model_name = os.path.basename(model_path)
+    
+    # Get parameters: GGUF first, then filename
+    parameters = extract_parameters_from_gguf(model_path)
+    if parameters is None:
+        parameters = extract_parameters_from_name(model_name)
+
     return {
         "model_path": os.path.abspath(model_path),
         "model_name": model_name,
-        "parameters": extract_parameters_from_name(model_name),  # ← NEW
+        "parameters": parameters,
         "file_size_mb": get_model_size_mb(model_path),
         "avg_tokens_per_sec": avg_tps,
         "peak_memory_mb": peak_memory_mb,
         "total_exec_time_sec": sum(r["exec_time_sec"] for r in results if r["exec_time_sec"] is not None),
         "per_prompt_results": results,
         "perplexity": ppl_score,
-        "timestamp": time.time(),
+        "date_checked": datetime.now().isoformat(),  # ← NEW: ISO timestamp
         "hardware_config": {
             "threads": threads,
             "ctx_size": ctx_size,
@@ -343,10 +363,21 @@ def benchmark_model(
             "batch_size": batch_size,
             "mlock": use_mlock
         },
-        "system_info": detect_hardware_info(),  # ← NEW
+        "system_info": detect_hardware_info(),
     }
 
 def save_leaderboard(leaderboard_path: str, new_result: dict):
+    try:
+        # Create directory if it doesn't exist (relative path safe!)
+        os.makedirs(os.path.dirname(leaderboard_path), exist_ok=True)
+    except PermissionError:
+        print(f"ERROR: Cannot create directory '{os.path.dirname(leaderboard_path)}'", file=sys.stderr)
+        print("Please ensure you have write permissions or use a different path.", file=sys.stderr)
+        sys.exit(1)
+    except FileNotFoundError:
+        # Handle case where path has no directory (e.g., "leaderboard.json")
+        pass
+    
     leaderboard = []
     if os.path.exists(leaderboard_path):
         with open(leaderboard_path, 'r') as f:
@@ -358,7 +389,7 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
     
     with open(leaderboard_path, 'w') as f:
         json.dump(leaderboard, f, indent=2)
-    print(f"\nLeaderboard saved to {leaderboard_path}")
+    print(f"\nLeaderboard saved to {os.path.abspath(leaderboard_path)}")
 
 def print_summary(result: dict):
     print("\n" + "="*60)
@@ -374,12 +405,14 @@ def print_summary(result: dict):
     sys_info = result['system_info']
     print(f"Hardware: {sys_info.get('device', 'N/A')}")
     print(f"          {sys_info.get('ram', 'N/A')} • {sys_info.get('cpu', 'N/A')}")
+    print(f"Date Checked: {result['date_checked']}")
     print("="*60)
 
 def main():
     parser = argparse.ArgumentParser(description="Non-interactive quantized model benchmark for llama.cpp")
     parser.add_argument("model_path", help="Path to GGUF model file")
-    parser.add_argument("--leaderboard", default="leaderboard.json", help="Output JSON file")
+    # FIXED: Use relative path 'docs/leaderboard.json' instead of '/docs/...'
+    parser.add_argument("--leaderboard", default="docs/leaderboard.json", help="Output JSON file (default: docs/leaderboard.json)")
     parser.add_argument("--prompts", nargs="*", help="Custom prompts")
     parser.add_argument("--n-predict", type=int, default=128, help="Tokens to generate")
     parser.add_argument("--ctx-size", type=int, default=2048, help="Context size")

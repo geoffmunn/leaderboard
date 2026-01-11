@@ -33,6 +33,13 @@ function renderTable() {
     const config = entry.hardware_config;
     const configStr = `threads=${config.threads}, ctx=${config.ctx_size}`;
     
+    // Format ISO date to readable string
+    function formatDate(isoString) {
+      if (!isoString) return 'N/A';
+      return new Date(isoString).toLocaleString();
+    }
+
+    // In renderTable():
     row.innerHTML = `
       <td><code>${entry.model_name}</code></td>
       <td>${entry.parameters || 'N/A'}</td>
@@ -46,6 +53,7 @@ function renderTable() {
           <code>${entry.system_info?.cpu || 'N/A'}</code>
         </small>
       </td>
+      <td>${formatDate(entry.date_checked)}</td>
     `;
     
     tbody.appendChild(row);
@@ -115,9 +123,14 @@ function sortTable(colIndex) {
     let aVal, bVal;
     switch(colIndex) {
       case 0: aVal = a.model_name; bVal = b.model_name; break;
-      case 1: aVal = a.file_size_mb || 0; bVal = b.file_size_mb || 0; break;
-      case 2: aVal = a.avg_tokens_per_sec || 0; bVal = b.avg_tokens_per_sec || 0; break;
-      case 3: aVal = a.peak_memory_mb || 0; bVal = b.peak_memory_mb || 0; break;
+      case 1: aVal = a.parameters || ''; bVal = b.parameters || ''; break;
+      case 2: aVal = a.file_size_mb || 0; bVal = b.file_size_mb || 0; break;
+      case 3: aVal = a.avg_tokens_per_sec || 0; bVal = b.avg_tokens_per_sec || 0; break;
+      case 4: aVal = a.peak_memory_mb || 0; bVal = b.peak_memory_mb || 0; break;
+      case 5: // Date Checked
+        aVal = new Date(a.date_checked || 0).getTime();
+        bVal = new Date(b.date_checked || 0).getTime();
+        break;
       default: return 0;
     }
     if (typeof aVal === 'string') {
