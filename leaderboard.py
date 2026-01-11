@@ -2,8 +2,13 @@
 """
 Quantized Model Leaderboard for llama.cpp — Non-Interactive Benchmark
 
-Uses PTY to capture terminal output (including speed stats) since
-llama-cli (build b7548) prints timings only to TTY, not stderr/stdout.
+Captures:
+- Tokens/sec (from TTY output)
+- Peak RAM usage
+- Model parameter count (e.g., 0.6B)
+- Hardware info (Raspberry Pi, RAM, CPU, OS)
+
+Tested with custom quants (Q3_K_HIFI) and llama.cpp build b7548.
 """
 
 import argparse
@@ -14,6 +19,17 @@ import time
 import pty
 import select
 import subprocess
+import platform
+import re
+
+# Try to import psutil for memory monitoring
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
+    print("Warning: 'psutil' not installed. Peak memory will not be recorded.", file=sys.stderr)
+    print("Install with: pip install psutil", file=sys.stderr)
 
 # Representative prompts
 PROMPTS = [
@@ -37,6 +53,76 @@ PPL_PROMPT = (
 def get_model_size_mb(model_path: str) -> float:
     return os.path.getsize(model_path) / (1024 * 1024)
 
+def extract_parameters_from_name(model_name: str) -> str:
+    """Extract parameter count from model name (e.g., 'Qwen3-0.6B' -> '0.6B')."""
+    # Remove extension
+    base_name = os.path.splitext(model_name)[0]
+    # Common patterns: Qwen3-0.6B, Mistral-7B, Phi-3-3.8B, etc.
+    match = re.search(r'(\d+\.?\d*[BbMm])', base_name)
+    if match:
+        return match.group(1).upper().replace('M', 'M').replace('B', 'B')
+    # Fallback heuristics
+    if any(x in base_name for x in ['0.5', '0.6', 'tiny']):
+        return "0.6B"
+    elif '1.5' in base_name:
+        return "1.5B"
+    elif '3' in base_name and '7' not in base_name and '13' not in base_name:
+        return "3B"
+    elif '7' in base_name:
+        return "7B"
+    elif '13' in base_name:
+        return "13B"
+    elif '34' in base_name:
+        return "34B"
+    return "Unknown"
+
+def detect_hardware_info():
+    """Detect hardware info (device, CPU, RAM, OS)."""
+    try:
+        # Device type
+        device = "Unknown Device"
+        machine = platform.machine().lower()
+        system = platform.system()
+        
+        if "aarch64" in machine or "arm" in machine:
+            # Raspberry Pi detection
+            if os.path.exists("/proc/device-tree/model"):
+                with open("/proc/device-tree/model", "r") as f:
+                    device = f.read().strip().replace("\x00", "")
+            else:
+                device = "ARM Device"
+        elif system == "Darwin":
+            device = "Apple Mac"
+        elif system == "Linux":
+            device = "Linux PC"
+        else:
+            device = f"{system} PC"
+        
+        # CPU info
+        cpu_count = os.cpu_count() or 1
+        cpu_model = platform.processor() or "Unknown"
+        cpu_info = f"{cpu_count}x {cpu_model}"
+        
+        # RAM
+        if PSUTIL_AVAILABLE:
+            ram_gb = psutil.virtual_memory().total / (1024**3)
+            ram_info = f"{ram_gb:.1f} GB RAM"
+        else:
+            ram_info = "RAM unknown"
+        
+        # OS
+        os_info = f"{system} {platform.release()}"
+        
+        return {
+            "device": device,
+            "cpu": cpu_info,
+            "ram": ram_info,
+            "os": os_info,
+            "timestamp": time.time()
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 def run_llama_cli(
     model_path: str,
     prompt: str,
@@ -48,7 +134,7 @@ def run_llama_cli(
     use_mlock: bool = False,
     ppl_mode: bool = False
 ) -> dict:
-    """Run llama-cli in a PTY to capture TTY output (including speed stats)."""
+    """Run llama-cli in a PTY and monitor memory with psutil."""
     cmd = [
         "./build/bin/llama-cli",
         "-m", model_path,
@@ -70,36 +156,46 @@ def run_llama_cli(
 
     start_time = time.time()
     full_output = ""
+    peak_memory_mb = None
 
-    # Launch in PTY to capture TTY-rendered output
+    # Launch in PTY
     pid, fd = pty.fork()
     if pid == 0:
-        # Child process
         os.execvp(cmd[0], cmd)
     else:
-        # Parent: read output until process exits
         try:
+            if PSUTIL_AVAILABLE:
+                proc = psutil.Process(pid)
+                peak_memory_mb = 0.0
+            else:
+                proc = None
+
             while True:
-                try:
-                    ready, _, _ = select.select([fd], [], [], 1)
-                    if ready:
-                        try:
-                            data = os.read(fd, 1024)
-                            if not data:
-                                break
-                            full_output += data.decode('utf-8', errors='ignore')
-                        except OSError:
+                if proc is not None:
+                    try:
+                        if proc.is_running():
+                            mem_mb = proc.memory_info().rss / (1024 * 1024)
+                            peak_memory_mb = max(peak_memory_mb, mem_mb)
+                        else:
                             break
-                    else:
-                        # Check if child exited
-                        try:
-                            os.waitpid(pid, os.WNOHANG)
-                            # Still running; continue
-                        except OSError:
-                            # Child exited
+                    except psutil.NoSuchProcess:
+                        break
+
+                ready, _, _ = select.select([fd], [], [], 0.1)
+                if ready:
+                    try:
+                        data = os.read(fd, 1024)
+                        if not data:
                             break
-                except KeyboardInterrupt:
-                    break
+                        full_output += data.decode('utf-8', errors='ignore')
+                    except OSError:
+                        break
+                else:
+                    try:
+                        os.waitpid(pid, os.WNOHANG)
+                    except OSError:
+                        break
+
         finally:
             os.close(fd)
             try:
@@ -121,7 +217,7 @@ def run_llama_cli(
             except (ValueError, IndexError):
                 continue
 
-    # Extract generated text (optional)
+    # Extract generated text
     output_text = ""
     if not ppl_mode:
         lines = full_output.splitlines()
@@ -132,7 +228,6 @@ def run_llama_cli(
                 continue
             if not capturing:
                 continue
-            # Skip UI elements
             if (line.strip().startswith(">") or
                 "[ Prompt:" in line or
                 "Exiting..." in line or
@@ -141,17 +236,18 @@ def run_llama_cli(
                 "model      :" in line or
                 "modalities" in line or
                 "▄▄" in line or "██" in line or
-                "llama_memory_breakdown_print" in line):
+                "llama_memory_breakdown_print" in line or
+                line.startswith("warning:")):
                 continue
             output_text += line + "\n"
         output_text = output_text.strip()
 
     return {
         "tokens_per_sec": tokens_per_sec,
-        "peak_memory_mb": None,  # Not captured in PTY mode (optional enhancement)
+        "peak_memory_mb": peak_memory_mb,
         "exec_time_sec": exec_time,
         "output_text": output_text,
-        "captured_output": full_output  # for debugging
+        "captured_output": full_output
     }
 
 def benchmark_model(
@@ -197,16 +293,15 @@ def benchmark_model(
 
     avg_tps = total_tps / valid_runs if valid_runs > 0 else 0.0
 
-    # Safely compute peak memory (may be all None)
+    # Safely compute peak memory
     memory_vals = [r["peak_memory_mb"] for r in results if r["peak_memory_mb"] is not None]
     peak_memory_mb = max(memory_vals) if memory_vals else None
 
-    # Perplexity (runs without PTY since it uses stderr)
+    # Perplexity
     ppl_score = None
     if include_ppl and valid_runs > 0:
         print("  Calculating perplexity...", end="", flush=True)
         try:
-            # Use standard subprocess for PPL (logs to stderr)
             cmd = [
                 "./build/bin/llama-cli",
                 "-m", model_path,
@@ -229,9 +324,11 @@ def benchmark_model(
         except Exception as e:
             print(f" PPL ERROR: {e}")
 
+    model_name = os.path.basename(model_path)
     return {
         "model_path": os.path.abspath(model_path),
-        "model_name": os.path.basename(model_path),
+        "model_name": model_name,
+        "parameters": extract_parameters_from_name(model_name),  # ← NEW
         "file_size_mb": get_model_size_mb(model_path),
         "avg_tokens_per_sec": avg_tps,
         "peak_memory_mb": peak_memory_mb,
@@ -245,7 +342,8 @@ def benchmark_model(
             "gpu_layers": gpu_layers,
             "batch_size": batch_size,
             "mlock": use_mlock
-        }
+        },
+        "system_info": detect_hardware_info(),  # ← NEW
     }
 
 def save_leaderboard(leaderboard_path: str, new_result: dict):
@@ -264,7 +362,7 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
 
 def print_summary(result: dict):
     print("\n" + "="*60)
-    print(f"MODEL: {result['model_name']}")
+    print(f"MODEL: {result['model_name']} ({result['parameters']})")
     print(f"Size: {result['file_size_mb']:.1f} MB")
     print(f"Speed: {result['avg_tokens_per_sec']:.2f} tokens/sec")
     if result['peak_memory_mb']:
@@ -273,6 +371,9 @@ def print_summary(result: dict):
         print(f"Perplexity: {result['perplexity']:.2f}")
     cfg = result['hardware_config']
     print(f"Config: threads={cfg['threads']}, ctx={cfg['ctx_size']}, gpu={cfg['gpu_layers']}")
+    sys_info = result['system_info']
+    print(f"Hardware: {sys_info.get('device', 'N/A')}")
+    print(f"          {sys_info.get('ram', 'N/A')} • {sys_info.get('cpu', 'N/A')}")
     print("="*60)
 
 def main():

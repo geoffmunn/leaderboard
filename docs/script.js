@@ -35,10 +35,17 @@ function renderTable() {
     
     row.innerHTML = `
       <td><code>${entry.model_name}</code></td>
+      <td>${entry.parameters || 'N/A'}</td>
       <td>${entry.file_size_mb?.toFixed(1) || 'N/A'}</td>
       <td>${speed.toFixed(2)}</td>
       <td>${entry.peak_memory_mb?.toFixed(1) || 'N/A'}</td>
-      <td><code>${configStr}</code></td>
+      <td>
+        <small>
+          ${entry.system_info?.device || 'N/A'} • 
+          ${entry.system_info?.ram || 'N/A'}<br>
+          <code>${entry.system_info?.cpu || 'N/A'}</code>
+        </small>
+      </td>
     `;
     
     tbody.appendChild(row);
