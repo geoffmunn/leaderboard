@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuantBoard — Real-World LLM Leaderboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>QuantBoard</h1>
+    <p>Real-world performance of quantized LLMs on personal hardware (Raspberry Pi, laptops, etc.)</p>
+  </header>
+
+  <main>
+    <div class="controls">
+      <label>
+        <input type="checkbox" id="hide-failed" checked /> Hide failed runs
+      </label>
+      <button id="refresh">Refresh Data</button>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="perfChart"></canvas>
+    </div>
+
+    <table id="leaderboard">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Model ▲</th>
+          <th onclick="sortTable(1)">Size (MB) ▲</th>
+          <th onclick="sortTable(2)">Speed (t/s) ▲</th>
+          <th onclick="sortTable(3)">Peak RAM (MB) ▲</th>
+          <th>Config</th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+    <p>Benchmarked with <a href="https://github.com/ggerganov/llama.cpp">llama.cpp</a> • 
+       Source: <a href="https://github.com/yourname/quantboard">GitHub</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
