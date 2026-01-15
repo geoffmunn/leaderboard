@@ -39,9 +39,14 @@ function renderTable() {
       return new Date(isoString).toLocaleString();
     }
 
+    // Format model name with link if HuggingFace repo is available
+    const modelNameCell = entry.huggingface_repo
+      ? `<code><a href="${entry.huggingface_repo}" target="_blank" rel="noopener noreferrer">${entry.model_name}</a></code>`
+      : `<code>${entry.model_name}</code>`;
+
     // In renderTable():
     row.innerHTML = `
-      <td><code>${entry.model_name}</code></td>
+      <td>${modelNameCell}</td>
       <td>${entry.parameters || 'N/A'}</td>
       <td>${entry.file_size_mb?.toFixed(1) || 'N/A'}</td>
       <td>${speed.toFixed(2)}</td>
