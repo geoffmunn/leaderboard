@@ -15,9 +15,6 @@
 
   <main>
     <div class="controls">
-      <label>
-        <input type="checkbox" id="hide-failed" checked /> Hide failed runs
-      </label>
       <button id="refresh">Refresh Data</button>
     </div>
 
@@ -28,15 +25,55 @@
     <table id="leaderboard">
       <thead>
         <tr>
-          <th onclick="sortTable(0)">Model ▲</th>
-          <th onclick="sortTable(1)">Params ▲</th>
-          <th onclick="sortTable(2)">Size (MB) ▲</th>
-          <th onclick="sortTable(3)">Speed (t/s) ▲</th>
-          <th onclick="sortTable(4)">PPL ▲</th>
-          <th onclick="sortTable(5)">Peak RAM (MB) ▲</th>
-          <th>Device</th>
-          <th onclick="sortTable(6)">System RAM (GB) ▲</th>
-          <th>Date Checked ▲</th>
+          <th>
+            Model
+            <select id="filter-model">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>
+            Params
+            <select id="filter-params">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>
+            Size (MB)
+            <select id="filter-size">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>
+            Speed (t/s)
+            <select id="filter-speed">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>
+            PPL
+            <select id="filter-ppl">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>
+            Peak RAM (MB)
+            <select id="filter-peak-ram">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>
+            Device
+            <select id="filter-device">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>
+            System RAM (GB)
+            <select id="filter-ram">
+              <option value="">All</option>
+            </select>
+          </th>
+          <th>Date Checked</th>
         </tr>
       </thead>
       <tbody id="table-body">

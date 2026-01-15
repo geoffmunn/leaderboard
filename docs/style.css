@@ -36,6 +36,23 @@
     flex-wrap: wrap;
     align-items: center;
   }
+
+  .controls label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  .controls select {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    font: inherit;
+    color: inherit;
+  }
   
   .chart-container {
     background: white;
