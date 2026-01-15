@@ -4382,6 +4382,74 @@
     }
   },
   {
+    "model_name": "Qwen3-8B-f16:Q2_K.gguf",
+    "parameters": "8B",
+    "file_size_mb": 3129.704376220703,
+    "avg_tokens_per_sec": 0.7375,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 3334.4453125,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-8B-f16",
+    "total_exec_time_sec": 552.1023333072662,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 1.1,
+        "peak_memory_mb": 3331.875,
+        "exec_time_sec": 43.795161962509155
+      },
+      {
+        "tokens_per_sec": 0.9,
+        "peak_memory_mb": 3332.70703125,
+        "exec_time_sec": 54.406095027923584
+      },
+      {
+        "tokens_per_sec": 0.7,
+        "peak_memory_mb": 3332.703125,
+        "exec_time_sec": 65.32567620277405
+      },
+      {
+        "tokens_per_sec": 0.7,
+        "peak_memory_mb": 3332.37109375,
+        "exec_time_sec": 69.37175750732422
+      },
+      {
+        "tokens_per_sec": 0.7,
+        "peak_memory_mb": 3333.8984375,
+        "exec_time_sec": 77.63612055778503
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 3334.4453125,
+        "exec_time_sec": 83.55198192596436
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 3332.3828125,
+        "exec_time_sec": 77.8108651638031
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 3332.4921875,
+        "exec_time_sec": 80.20467495918274
+      }
+    ],
+    "date_checked": "2026-01-15T22:07:43.565903",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
     "model_path": "/home/geoff/HIFI/leaderboard/Qwen3-4B-f16:Q8_0.gguf",
     "model_name": "Qwen3-4B-f16:Q8_0.gguf",
     "parameters": "4B",
@@ -4736,6 +4804,278 @@
       }
     ],
     "date_checked": "2026-01-15T20:05:33.106677",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
+    "model_name": "Qwen3-8B-f16-imatrix:Q4_K_S.gguf",
+    "parameters": "8B",
+    "file_size_mb": 4579.556213378906,
+    "avg_tokens_per_sec": 0.625,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 4784.265625,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-8B-f16",
+    "total_exec_time_sec": 603.5484852790833,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.7,
+        "peak_memory_mb": 4781.5625,
+        "exec_time_sec": 56.08285641670227
+      },
+      {
+        "tokens_per_sec": 0.7,
+        "peak_memory_mb": 4782.2734375,
+        "exec_time_sec": 68.33564853668213
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4782.5078125,
+        "exec_time_sec": 73.7183907032013
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4782.359375,
+        "exec_time_sec": 75.3398072719574
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4783.83984375,
+        "exec_time_sec": 81.3713047504425
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4784.265625,
+        "exec_time_sec": 87.29712080955505
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4782.21484375,
+        "exec_time_sec": 80.01708364486694
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4782.17578125,
+        "exec_time_sec": 81.38627314567566
+      }
+    ],
+    "date_checked": "2026-01-15T21:38:49.382132",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
+    "model_name": "Qwen3-8B-f16-imatrix:Q4_K_HIFI.gguf",
+    "parameters": "8B",
+    "file_size_mb": 5055.7320556640625,
+    "avg_tokens_per_sec": 0.5125,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 5260.49609375,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-8B-f16",
+    "total_exec_time_sec": 722.0110495090485,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 5257.875,
+        "exec_time_sec": 66.08942484855652
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 5258.62890625,
+        "exec_time_sec": 85.14543914794922
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 5258.921875,
+        "exec_time_sec": 90.25191688537598
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 5258.47265625,
+        "exec_time_sec": 91.81397771835327
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 5259.8984375,
+        "exec_time_sec": 97.85558652877808
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 5260.49609375,
+        "exec_time_sec": 101.47869324684143
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 5258.21875,
+        "exec_time_sec": 94.28551459312439
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 5258.296875,
+        "exec_time_sec": 95.09049654006958
+      }
+    ],
+    "date_checked": "2026-01-15T20:31:19.799620",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
+    "model_name": "Qwen3-8B-f16-imatrix:Q4_K_M.gguf",
+    "parameters": "8B",
+    "file_size_mb": 4794.868713378906,
+    "avg_tokens_per_sec": 0.5125,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 4999.51171875,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-8B-f16",
+    "total_exec_time_sec": 697.614963054657,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4997.0390625,
+        "exec_time_sec": 69.5094587802887
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4997.78515625,
+        "exec_time_sec": 85.23093962669373
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4997.94140625,
+        "exec_time_sec": 86.93623304367065
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4997.5234375,
+        "exec_time_sec": 87.69196033477783
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4999.04296875,
+        "exec_time_sec": 93.24078488349915
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4999.51171875,
+        "exec_time_sec": 96.00724864006042
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4997.37890625,
+        "exec_time_sec": 89.46350073814392
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4997.51171875,
+        "exec_time_sec": 89.53483700752258
+      }
+    ],
+    "date_checked": "2026-01-15T20:53:59.915825",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
+    "model_name": "Qwen3-8B-f16:Q3_K_HIFI.gguf",
+    "parameters": "8B",
+    "file_size_mb": 4088.4427185058594,
+    "avg_tokens_per_sec": 0.5125,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 4293.1953125,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-8B-f16",
+    "total_exec_time_sec": 759.2626037597656,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4290.515625,
+        "exec_time_sec": 73.94735217094421
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4291.4296875,
+        "exec_time_sec": 91.63962435722351
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4291.43359375,
+        "exec_time_sec": 95.0826051235199
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4291.09765625,
+        "exec_time_sec": 94.8634021282196
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4292.57421875,
+        "exec_time_sec": 102.43623948097229
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4293.1953125,
+        "exec_time_sec": 105.38272070884705
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4291.01171875,
+        "exec_time_sec": 98.12014961242676
+      },
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 4291.11328125,
+        "exec_time_sec": 97.7905101776123
+      }
+    ],
+    "date_checked": "2026-01-15T22:29:02.685072",
     "hardware_config": {
       "threads": 4,
       "ctx_size": 1024,
