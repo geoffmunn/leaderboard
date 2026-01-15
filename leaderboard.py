@@ -517,6 +517,20 @@ def benchmark_model(
     if huggingface_repo is None:
         huggingface_repo = extract_huggingface_repo_from_gguf(model_path)
 
+    # Create human-readable benchmark command string
+    cmd_parts = [
+        f"--n-predict {n_predict}",
+        f"--ctx-size {ctx_size}",
+        f"--threads {threads}",
+        f"--batch-size {batch_size}",
+        f"--gpu-layers {gpu_layers}"
+    ]
+    if use_mlock:
+        cmd_parts.append("--mlock")
+    if not include_ppl:
+        cmd_parts.append("--no-ppl")
+    benchmark_command = " ".join(cmd_parts)
+
     return {
         "model_name": model_name,
         "parameters": parameters,
@@ -529,6 +543,17 @@ def benchmark_model(
         "total_exec_time_sec": sum(r["exec_time_sec"] for r in results if r["exec_time_sec"] is not None),
         "per_prompt_results": results,
         "date_checked": datetime.now().isoformat(),
+        "benchmark_config": {
+            "n_predict": n_predict,
+            "ctx_size": ctx_size,
+            "threads": threads,
+            "batch_size": batch_size,
+            "gpu_layers": gpu_layers,
+            "mlock": use_mlock,
+            "include_ppl": include_ppl,
+            "num_prompts": len(prompts)
+        },
+        "benchmark_command": benchmark_command,
         "hardware_config": {
             "threads": threads,
             "ctx_size": ctx_size,
