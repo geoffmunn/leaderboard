@@ -354,6 +354,51 @@ def calculate_perplexity(model_path, ctx_size, threads, batch_size, gpu_layers):
         traceback.print_exc()
         return None
 
+def detect_outliers(values: list) -> list:
+    """
+    Detect outliers in a list of values using IQR method and threshold check.
+    Returns a list of indices that are outliers.
+    """
+    if len(values) < 3:
+        return []  # Need at least 3 values to detect outliers
+    
+    # Convert to list of tuples (index, value) for tracking
+    indexed_values = [(i, v) for i, v in enumerate(values)]
+    
+    # Sort by value
+    sorted_values = sorted(indexed_values, key=lambda x: x[1])
+    
+    # Calculate quartiles
+    n = len(sorted_values)
+    q1_idx = n // 4
+    q3_idx = (3 * n) // 4
+    
+    q1 = sorted_values[q1_idx][1]
+    q3 = sorted_values[q3_idx][1]
+    iqr = q3 - q1
+    
+    # Calculate median
+    median_idx = n // 2
+    median = sorted_values[median_idx][1]
+    
+    # Find outliers using IQR method (values outside Q1 - 1.5*IQR to Q3 + 1.5*IQR)
+    outlier_indices = set()
+    if iqr > 0:
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        for idx, val in indexed_values:
+            if val < lower_bound or val > upper_bound:
+                outlier_indices.add(idx)
+    
+    # Also check for values that are more than 10x the median (catches extreme cases)
+    for idx, val in indexed_values:
+        if median > 0 and val > 10 * median:
+            outlier_indices.add(idx)
+        elif median > 0 and val < median / 10:
+            outlier_indices.add(idx)
+    
+    return list(outlier_indices)
+
 def benchmark_model(
     model_path: str,
     prompts: list,
@@ -368,8 +413,7 @@ def benchmark_model(
     print(f"Benchmarking {os.path.basename(model_path)}...")
     
     results = []
-    total_tps = 0.0
-    valid_runs = 0
+    tps_values = []  # Collect all tokens_per_sec values for outlier detection
 
     for i, prompt in enumerate(prompts):
         print(f"  Running prompt {i+1}/{len(prompts)}...", end="", flush=True)
@@ -387,15 +431,34 @@ def benchmark_model(
             )
             if res["tokens_per_sec"] is not None:
                 results.append(res)
-                total_tps += res["tokens_per_sec"]
-                valid_runs += 1
+                tps_values.append(res["tokens_per_sec"])
                 print(f" {res['tokens_per_sec']:.2f} t/s")
             else:
                 print(" FAILED (no speed)")
         except Exception as e:
             print(f" ERROR: {e}")
 
-    avg_tps = total_tps / valid_runs if valid_runs > 0 else 0.0
+    # Detect and filter outliers
+    outlier_count = 0
+    valid_tps_values = []
+    if len(tps_values) >= 3:
+        outlier_indices = set(detect_outliers(tps_values))
+        if outlier_indices:
+            # Mark outliers in results and report them
+            for idx, tps_val in enumerate(tps_values):
+                if idx in outlier_indices:
+                    print(f"  ⚠️  Detected outlier: prompt {idx+1} with {tps_val:.2f} t/s (ignoring for average)")
+                    results[idx]["is_outlier"] = True
+                    outlier_count += 1
+                else:
+                    valid_tps_values.append(tps_val)
+        else:
+            valid_tps_values = tps_values.copy()
+    else:
+        valid_tps_values = tps_values.copy()
+    
+    # Calculate average from non-outlier values
+    avg_tps = sum(valid_tps_values) / len(valid_tps_values) if valid_tps_values else 0.0
 
     memory_vals = [r["peak_memory_mb"] for r in results if r["peak_memory_mb"] is not None]
     peak_memory_mb = max(memory_vals) if memory_vals else None
@@ -420,6 +483,7 @@ def benchmark_model(
         "parameters": parameters,
         "file_size_mb": get_model_size_mb(model_path),
         "avg_tokens_per_sec": avg_tps,
+        "outliers_detected": outlier_count,
         "perplexity": ppl_score,  # Now correctly populated
         "peak_memory_mb": peak_memory_mb,
         "total_exec_time_sec": sum(r["exec_time_sec"] for r in results if r["exec_time_sec"] is not None),
