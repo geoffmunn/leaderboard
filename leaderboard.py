@@ -80,6 +80,43 @@ def extract_parameters_from_gguf(model_path: str) -> str:
         print(f"GGUF metadata read error: {e}", file=sys.stderr)
         return None
 
+def extract_huggingface_repo_from_gguf(model_path: str) -> str:
+    """Extract HuggingFace repository URL from GGUF metadata if available."""
+    if not GGUF_AVAILABLE:
+        return None
+    try:
+        reader = GGUFReader(model_path)
+        # Check common field names that might contain HuggingFace repo info
+        possible_fields = [
+            "general.source_url",
+            "general.source",
+            "general.url",
+            "general.repository",
+            "general.huggingface_repo",
+            "custom.source_url",
+            "custom.huggingface_repo",
+        ]
+        
+        for field_name in possible_fields:
+            if field_name in reader.fields:
+                value = reader.fields[field_name].parts[-1]
+                # Convert bytes to string if needed
+                if isinstance(value, bytes):
+                    value = value.decode('utf-8', errors='ignore')
+                if isinstance(value, str):
+                    value = value.strip()
+                    # Check if it looks like a HuggingFace URL
+                    if "huggingface.co" in value.lower():
+                        return value
+                    # If it's a repo name (user/repo format), construct the URL
+                    elif "/" in value and not value.startswith("http"):
+                        return f"https://huggingface.co/{value}"
+        
+        return None
+    except Exception as e:
+        # Silently fail - this is optional metadata
+        return None
+
 def extract_parameters_from_name(model_name: str) -> str:
     """Fallback: extract from filename."""
     base_name = os.path.splitext(model_name)[0]
@@ -409,6 +446,7 @@ def benchmark_model(
     gpu_layers: int = 0,
     use_mlock: bool = False,
     include_ppl: bool = True,
+    huggingface_repo: str = None,
 ) -> dict:
     print(f"Benchmarking {os.path.basename(model_path)}...")
     
@@ -477,6 +515,10 @@ def benchmark_model(
     if parameters is None:
         parameters = extract_parameters_from_name(model_name)
 
+    # Extract HuggingFace repo URL if not provided
+    if huggingface_repo is None:
+        huggingface_repo = extract_huggingface_repo_from_gguf(model_path)
+
     return {
         "model_path": os.path.abspath(model_path),
         "model_name": model_name,
@@ -486,6 +528,7 @@ def benchmark_model(
         "outliers_detected": outlier_count,
         "perplexity": ppl_score,  # Now correctly populated
         "peak_memory_mb": peak_memory_mb,
+        "huggingface_repo": huggingface_repo,
         "total_exec_time_sec": sum(r["exec_time_sec"] for r in results if r["exec_time_sec"] is not None),
         "per_prompt_results": results,
         "date_checked": datetime.now().isoformat(),
@@ -569,6 +612,8 @@ def upload_to_github():
 def print_summary(result: dict):
     print("\n" + "="*60)
     print(f"MODEL: {result['model_name']} ({result['parameters']})")
+    if result.get('huggingface_repo'):
+        print(f"HuggingFace: {result['huggingface_repo']}")
     print(f"Size: {result['file_size_mb']:.1f} MB")
     print(f"Speed: {result['avg_tokens_per_sec']:.2f} tokens/sec")
     print(f"Perplexity: {result['perplexity']:.2f}" if result['perplexity'] else "Perplexity: N/A")
@@ -596,6 +641,7 @@ def main():
     parser.add_argument("--no-ppl", action="store_true", help="Skip perplexity calculation (useful for low-spec machines)")
     parser.add_argument("--no-upload", action="store_true", help="Skip GitHub upload")
     parser.add_argument("--no-save", action="store_true", help="Skip saving to leaderboard")
+    parser.add_argument("--huggingface-repo", type=str, default=None, help="HuggingFace repository URL (e.g., https://huggingface.co/user/repo or user/repo). If not provided, will attempt to extract from GGUF metadata.")
 
     args = parser.parse_args()
 
@@ -609,6 +655,12 @@ def main():
 
     prompts = args.prompts if args.prompts else PROMPTS
 
+    # Normalize HuggingFace repo URL if provided
+    hf_repo = args.huggingface_repo
+    if hf_repo and not hf_repo.startswith("http"):
+        # If it's just "user/repo", convert to full URL
+        hf_repo = f"https://huggingface.co/{hf_repo}"
+
     result = benchmark_model(
         model_path=args.model_path,
         prompts=prompts,
@@ -618,7 +670,8 @@ def main():
         batch_size=args.batch_size,
         gpu_layers=args.gpu_layers,
         use_mlock=args.mlock,
-        include_ppl=not args.no_ppl
+        include_ppl=not args.no_ppl,
+        huggingface_repo=hf_repo
     )
 
     print_summary(result)
