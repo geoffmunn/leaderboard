@@ -1,10 +1,94 @@
 let leaderboardData = [];
 
+function getEntryDevice(entry) {
+  const d = entry?.system_info?.device;
+  return (typeof d === 'string' && d.trim().length > 0) ? d.trim() : 'N/A';
+}
+
+function getFilters() {
+  const getVal = id => {
+    const el = document.getElementById(id);
+    return el ? el.value : '';
+  };
+  return {
+    model: getVal('filter-model'),
+    params: getVal('filter-params'),
+    size: getVal('filter-size'),
+    speed: getVal('filter-speed'),
+    ppl: getVal('filter-ppl'),
+    peakRam: getVal('filter-peak-ram'),
+    device: getVal('filter-device'),
+    ram: getVal('filter-ram'),
+  };
+}
+
+function populateFilters() {
+  const addOptions = (id, values) => {
+    const select = document.getElementById(id);
+    if (!select) return;
+    const selected = select.value;
+    select.innerHTML = '';
+    const allOpt = document.createElement('option');
+    allOpt.value = '';
+    allOpt.textContent = 'All';
+    select.appendChild(allOpt);
+    values.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      select.appendChild(opt);
+    });
+    if (selected && values.includes(selected)) {
+      select.value = selected;
+    }
+  };
+
+  const models = new Set();
+  const params = new Set();
+  const sizes = new Set();
+  const speeds = new Set();
+  const ppls = new Set();
+  const peaks = new Set();
+  const devices = new Set();
+  const rams = new Set();
+
+  leaderboardData.forEach(entry => {
+    const speed = entry.avg_tokens_per_sec || 0;
+    const speedStr = speed.toFixed(2);
+    const sizeStr = entry.file_size_mb != null ? entry.file_size_mb.toFixed(1) : 'N/A';
+    const pplStr = entry.perplexity != null ? entry.perplexity.toFixed(2) : 'N/A';
+    const peakStr = entry.peak_memory_mb != null ? entry.peak_memory_mb.toFixed(1) : 'N/A';
+    const deviceStr = getEntryDevice(entry);
+    const ramStr = entry.system_info?.ram_gb ?? 'N/A';
+
+    if (entry.model_name) models.add(entry.model_name);
+    params.add(entry.parameters || 'N/A');
+    sizes.add(sizeStr);
+    speeds.add(speedStr);
+    ppls.add(pplStr);
+    peaks.add(peakStr);
+    devices.add(deviceStr);
+    rams.add(ramStr);
+  });
+
+  const alphaSort = arr => arr.sort((a, b) => String(a).localeCompare(String(b), undefined, { sensitivity: 'base' }));
+
+  addOptions('filter-model', alphaSort(Array.from(models)));
+  addOptions('filter-params', alphaSort(Array.from(params)));
+  addOptions('filter-size', alphaSort(Array.from(sizes)));
+  addOptions('filter-speed', alphaSort(Array.from(speeds)));
+  addOptions('filter-ppl', alphaSort(Array.from(ppls)));
+  addOptions('filter-peak-ram', alphaSort(Array.from(peaks)));
+  addOptions('filter-device', alphaSort(Array.from(devices)));
+  addOptions('filter-ram', alphaSort(Array.from(rams)));
+}
+
 // Load and render data
 async function loadLeaderboard() {
   try {
     const response = await fetch('leaderboard.json');
     leaderboardData = await response.json();
+    populateFilters();
     renderTable();
     renderChart();
   } catch (error) {
@@ -17,15 +101,28 @@ async function loadLeaderboard() {
 // Render table
 function renderTable() {
   const tbody = document.getElementById('table-body');
-  const hideFailed = document.getElementById('hide-failed').checked;
+  const filters = getFilters();
   
   tbody.innerHTML = '';
   
   leaderboardData.forEach(entry => {
     const speed = entry.avg_tokens_per_sec || 0;
     const isFailed = speed === 0;
-    
-    if (hideFailed && isFailed) return;
+    const entryDevice = getEntryDevice(entry);
+    const sizeStr = entry.file_size_mb != null ? entry.file_size_mb.toFixed(1) : 'N/A';
+    const speedStr = speed.toFixed(2);
+    const pplStr = entry.perplexity != null ? entry.perplexity.toFixed(2) : 'N/A';
+    const peakStr = entry.peak_memory_mb != null ? entry.peak_memory_mb.toFixed(1) : 'N/A';
+    const ramStr = entry.system_info?.ram_gb ?? 'N/A';
+
+    if (filters.model && entry.model_name !== filters.model) return;
+    if (filters.params && (entry.parameters || 'N/A') !== filters.params) return;
+    if (filters.size && sizeStr !== filters.size) return;
+    if (filters.speed && speedStr !== filters.speed) return;
+    if (filters.ppl && pplStr !== filters.ppl) return;
+    if (filters.peakRam && peakStr !== filters.peakRam) return;
+    if (filters.device && entryDevice !== filters.device) return;
+    if (filters.ram && ramStr !== filters.ram) return;
     
     const row = document.createElement('tr');
     if (isFailed) row.classList.add('failed');
@@ -48,12 +145,12 @@ function renderTable() {
     row.innerHTML = `
       <td>${modelNameCell}</td>
       <td>${entry.parameters || 'N/A'}</td>
-      <td>${entry.file_size_mb?.toFixed(1) || 'N/A'}</td>
-      <td>${speed.toFixed(2)}</td>
-      <td>${entry.perplexity ? entry.perplexity.toFixed(2) : 'N/A'}</td>
-      <td>${entry.peak_memory_mb?.toFixed(1) || 'N/A'}</td>
-      <td>${entry.system_info?.device || 'N/A'}</td>
-      <td>${entry.system_info?.ram_gb || 'N/A'}</td>
+      <td>${sizeStr}</td>
+      <td>${speedStr}</td>
+      <td>${pplStr}</td>
+      <td>${peakStr}</td>
+      <td>${entryDevice}</td>
+      <td>${ramStr}</td>
       <td>${formatDate(entry.date_checked)}</td>
     `;
     
@@ -66,7 +163,27 @@ function renderChart() {
   const ctx = document.getElementById('perfChart').getContext('2d');
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   
-  const validEntries = leaderboardData.filter(e => e.avg_tokens_per_sec > 0);
+  const filters = getFilters();
+  const validEntries = leaderboardData.filter(e => {
+    if ((e.avg_tokens_per_sec || 0) <= 0) return false;
+    const entryDevice = getEntryDevice(e);
+    const speed = e.avg_tokens_per_sec || 0;
+    const sizeStr = e.file_size_mb != null ? e.file_size_mb.toFixed(1) : 'N/A';
+    const speedStr = speed.toFixed(2);
+    const pplStr = e.perplexity != null ? e.perplexity.toFixed(2) : 'N/A';
+    const peakStr = e.peak_memory_mb != null ? e.peak_memory_mb.toFixed(1) : 'N/A';
+    const ramStr = e.system_info?.ram_gb ?? 'N/A';
+
+    if (filters.model && e.model_name !== filters.model) return false;
+    if (filters.params && (e.parameters || 'N/A') !== filters.params) return false;
+    if (filters.size && sizeStr !== filters.size) return false;
+    if (filters.speed && speedStr !== filters.speed) return false;
+    if (filters.ppl && pplStr !== filters.ppl) return false;
+    if (filters.peakRam && peakStr !== filters.peakRam) return false;
+    if (filters.device && entryDevice !== filters.device) return false;
+    if (filters.ram && ramStr !== filters.ram) return false;
+    return true;
+  });
   if (validEntries.length === 0) {
     ctx.font = '16px sans-serif';
     ctx.fillText('No valid benchmark data', 10, 30);
@@ -108,50 +225,17 @@ function renderChart() {
   });
 }
 
-// Sort table
-let sortDir = 1; // 1 = asc, -1 = desc
-function sortTable(colIndex) {
-  const headers = document.querySelectorAll('th');
-  headers.forEach((th, i) => {
-    if (i === colIndex) {
-      th.textContent = th.textContent.replace(/ ▲| ▼/, '') + (sortDir === 1 ? ' ▲' : ' ▼');
-    } else {
-      th.textContent = th.textContent.replace(/ ▲| ▼/, '') + ' ▲';
-    }
-  });
-  
-  leaderboardData.sort((a, b) => {
-    let aVal, bVal;
-    switch(colIndex) {
-      case 0: aVal = a.model_name; bVal = b.model_name; break;
-      case 1: aVal = a.parameters || ''; bVal = b.parameters || ''; break;
-      case 2: aVal = a.file_size_mb || 0; bVal = b.file_size_mb || 0; break;
-      case 3: aVal = a.avg_tokens_per_sec || 0; bVal = b.avg_tokens_per_sec || 0; break;
-      case 4: aVal = a.perplexity || 999; bVal = b.perplexity || 999; break; // Lower PPL = better
-      case 5: aVal = a.peak_memory_mb || 0; bVal = b.peak_memory_mb || 0; break;
-      case 6: aVal = a.system_info?.ram_gb || 0; bVal = b.system_info?.ram_gb || 0; break;
-      case 7: // Date Checked
-        aVal = new Date(a.date_checked || 0).getTime();
-        bVal = new Date(b.date_checked || 0).getTime();
-        break;
-      default: return 0;
-    }
-    if (typeof aVal === 'string') {
-      return sortDir * aVal.localeCompare(bVal);
-    }
-    return sortDir * (aVal - bVal);
-  });
-  
-  sortDir *= -1;
-  renderTable();
-  renderChart(); // Re-render chart after sorting (optional)
-}
-
 // Event listeners
-document.getElementById('hide-failed').addEventListener('change', () => {
-  renderTable();
-  renderChart();
-});
+['filter-model','filter-params','filter-size','filter-speed','filter-ppl','filter-peak-ram','filter-device','filter-ram']
+  .forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', () => {
+        renderTable();
+        renderChart();
+      });
+    }
+  });
 document.getElementById('refresh').addEventListener('click', loadLeaderboard);
 
 // Initialize
