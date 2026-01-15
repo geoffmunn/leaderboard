@@ -190,7 +190,7 @@ def run_llama_cli(
 ) -> dict:
     """Run llama-cli in a PTY."""
     cmd = [
-        "./build/bin/llama-cli",
+        "../llama.cpp/build/bin/llama-cli",
         "-m", model_path,
         "-n", str(n_predict),
         "-c", str(ctx_size),
@@ -296,9 +296,7 @@ def run_llama_cli(
     return {
         "tokens_per_sec": tokens_per_sec,
         "peak_memory_mb": peak_memory_mb,
-        "exec_time_sec": exec_time,
-        "output_text": output_text,
-        "captured_output": full_output
+        "exec_time_sec": exec_time
     }
 
 def calculate_perplexity(model_path, ctx_size, threads, batch_size, gpu_layers):
@@ -313,7 +311,7 @@ def calculate_perplexity(model_path, ctx_size, threads, batch_size, gpu_layers):
             return None
                 
         cmd = [
-            "./build/bin/llama-perplexity",
+            "../llama.cpp/build/bin/llama-perplexity",
             "-m", model_path,
             "-f", wiki_file,
             "-c", str(ctx_size),
@@ -520,7 +518,6 @@ def benchmark_model(
         huggingface_repo = extract_huggingface_repo_from_gguf(model_path)
 
     return {
-        "model_path": os.path.abspath(model_path),
         "model_name": model_name,
         "parameters": parameters,
         "file_size_mb": get_model_size_mb(model_path),
@@ -542,6 +539,19 @@ def benchmark_model(
         "system_info": detect_hardware_info(),
     }
 
+def get_unique_key(entry: dict) -> str:
+    """Generate a unique key for duplicate detection based on model name and system info."""
+    model_name = entry.get("model_name", "unknown")
+    system_info = entry.get("system_info", {})
+    
+    # Create a hardware fingerprint from key system info fields
+    device = system_info.get("device", "unknown")
+    cpu = system_info.get("cpu", "unknown")
+    os_info = system_info.get("os", "unknown")
+    
+    # Combine model name with hardware info to create unique identifier
+    return f"{model_name}|{device}|{cpu}|{os_info}"
+
 def save_leaderboard(leaderboard_path: str, new_result: dict):
     try:
         os.makedirs(os.path.dirname(leaderboard_path), exist_ok=True)
@@ -557,7 +567,9 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
         except json.JSONDecodeError:
             print(f"WARNING: Corrupted leaderboard.json. Starting fresh.", file=sys.stderr)
     
-    leaderboard = [entry for entry in leaderboard if entry["model_path"] != new_result["model_path"]]
+    # Use unique key (model + hardware) for duplicate detection
+    new_key = get_unique_key(new_result)
+    leaderboard = [entry for entry in leaderboard if get_unique_key(entry) != new_key]
     leaderboard.append(new_result)
     leaderboard.sort(key=lambda x: x.get("avg_tokens_per_sec", 0), reverse=True)
     
@@ -645,8 +657,8 @@ def main():
 
     args = parser.parse_args()
 
-    if not os.path.exists("./build/bin/llama-cli"):
-        print("ERROR: ./build/bin/llama-cli not found. Please build llama.cpp first.")
+    if not os.path.exists("../llama.cpp/build/bin/llama-cli"):
+        print("ERROR: ../llama.cpp/build/bin/llama-cli not found. Please build llama.cpp first.")
         sys.exit(1)
 
     if not os.path.isfile(args.model_path):
