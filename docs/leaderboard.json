@@ -4465,6 +4465,74 @@
     }
   },
   {
+    "model_name": "Qwen3-8B-f16-imatrix:Q3_K_HIFI.gguf",
+    "parameters": "8B",
+    "file_size_mb": 4088.4429321289062,
+    "avg_tokens_per_sec": 0.6875,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 4293.3515625,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-8B-f16",
+    "total_exec_time_sec": 571.3461008071899,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.9,
+        "peak_memory_mb": 4290.56640625,
+        "exec_time_sec": 50.10148024559021
+      },
+      {
+        "tokens_per_sec": 0.8,
+        "peak_memory_mb": 4291.3984375,
+        "exec_time_sec": 55.97786617279053
+      },
+      {
+        "tokens_per_sec": 0.7,
+        "peak_memory_mb": 4291.30078125,
+        "exec_time_sec": 64.87797570228577
+      },
+      {
+        "tokens_per_sec": 0.7,
+        "peak_memory_mb": 4291.078125,
+        "exec_time_sec": 69.80069351196289
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4292.3984375,
+        "exec_time_sec": 79.12891054153442
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4293.3515625,
+        "exec_time_sec": 86.31584453582764
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4291.0625,
+        "exec_time_sec": 81.18715977668762
+      },
+      {
+        "tokens_per_sec": 0.6,
+        "peak_memory_mb": 4291.1953125,
+        "exec_time_sec": 83.95617032051086
+      }
+    ],
+    "date_checked": "2026-01-15T18:25:48.844628",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
     "model_path": "/home/geoff/HIFI/leaderboard/Qwen3-30B-A3B-Instruct-2507-Q3_K_S-2.70bpw.gguf",
     "model_name": "Qwen3-30B-A3B-Instruct-2507-Q3_K_S-2.70bpw.gguf",
     "parameters": "30B",
