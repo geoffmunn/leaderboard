@@ -164,6 +164,8 @@ function renderChart() {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   
   const filters = getFilters();
+  
+  // Get all valid entries (speed > 0) - don't filter by params for chart
   const validEntries = leaderboardData.filter(e => {
     if ((e.avg_tokens_per_sec || 0) <= 0) return false;
     const entryDevice = getEntryDevice(e);
@@ -174,8 +176,8 @@ function renderChart() {
     const peakStr = e.peak_memory_mb != null ? e.peak_memory_mb.toFixed(1) : 'N/A';
     const ramStr = e.system_info?.ram_gb ?? 'N/A';
 
+    // Apply all filters except params - params filter affects styling only
     if (filters.model && e.model_name !== filters.model) return false;
-    if (filters.params && (e.parameters || 'N/A') !== filters.params) return false;
     if (filters.size && sizeStr !== filters.size) return false;
     if (filters.speed && speedStr !== filters.speed) return false;
     if (filters.ppl && pplStr !== filters.ppl) return false;
@@ -184,27 +186,46 @@ function renderChart() {
     if (filters.ram && ramStr !== filters.ram) return false;
     return true;
   });
+  
   if (validEntries.length === 0) {
     ctx.font = '16px sans-serif';
     ctx.fillText('No valid benchmark data', 10, 30);
     return;
   }
 
+  // Determine which entries match the param filter
+  const paramFilter = filters.params;
+  const pointBackgroundColors = validEntries.map(e => {
+    const entryParams = e.parameters || 'N/A';
+    const matches = !paramFilter || entryParams === paramFilter;
+    return matches ? 'rgba(52, 152, 219, 0.6)' : 'rgba(200, 200, 200, 0.3)';
+  });
+  const pointBorderColors = validEntries.map(e => {
+    const entryParams = e.parameters || 'N/A';
+    const matches = !paramFilter || entryParams === paramFilter;
+    return matches ? 'rgba(41, 128, 185, 1)' : 'rgba(150, 150, 150, 0.5)';
+  });
+
   const data = {
     labels: validEntries.map(e => e.model_name),
     datasets: [{
       label: 'Tokens per Second',
       data: validEntries.map(e => ({ x: e.file_size_mb, y: e.avg_tokens_per_sec })),
-      backgroundColor: 'rgba(52, 152, 219, 0.6)',
-      borderColor: 'rgba(41, 128, 185, 1)',
+      backgroundColor: pointBackgroundColors,
+      borderColor: pointBorderColors,
       borderWidth: 1,
       radius: 6
     }]
   };
   
+  // Destroy existing chart if it exists
+  if (window.perfChart && typeof window.perfChart.destroy === 'function') {
+    window.perfChart.destroy();
+  }
+  
   window.perfChart = new Chart(ctx, {
     type: 'scatter',
-     data,
+    data,
     options: {
       responsive: true,
       maintainAspectRatio: false,
