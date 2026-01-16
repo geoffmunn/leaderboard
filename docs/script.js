@@ -219,7 +219,7 @@ function renderChart() {
   };
   
   // Destroy existing chart if it exists
-  if (window.perfChart) {
+  if (window.perfChart && typeof window.perfChart.destroy === 'function') {
     window.perfChart.destroy();
   }
   
