@@ -78,7 +78,7 @@ ssh-keygen -t ed25519 -C "your_email@example.com"
 
 Then add the provided key details to your GitHub account:
 
-```[GitHub → Settings → SSH Keys](https://github.com/settings/keys)```
+[GitHub → Settings → SSH Keys](https://github.com/settings/keys)
 
 And then convert your local repository to use SSH keys (if you haven't already done this) - make sure you change the username and repository name.
 
