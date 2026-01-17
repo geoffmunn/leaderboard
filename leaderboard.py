@@ -508,7 +508,24 @@ def benchmark_model(
     else:
         print("  Skipping perplexity calculation (--no-ppl)", flush=True)
 
-    model_name = os.path.basename(model_path)
+    # Normalize model name: remove extension and decode percent-encodings
+    # (e.g. convert "%3A" or double-encoded "%253A" into ":") so
+    # we get a consistent format like `Qwen3-0.6B-f16-imatrix:Q4_K_M`.
+    try:
+        from urllib.parse import unquote
+        base = os.path.splitext(os.path.basename(model_path))[0]
+        # If it looks like a percent-encoded colon, decode once or twice
+        if '%3a' in base.lower() or '%253a' in base.lower():
+            decoded = unquote(base)
+            # handle double-encoded values ("%253A" -> "%3A" -> ":")
+            if '%3a' in decoded.lower() or '%253a' in decoded.lower():
+                decoded = unquote(decoded)
+            model_name = decoded
+        else:
+            model_name = base
+    except Exception:
+        # Fallback to basename if anything goes wrong
+        model_name = os.path.splitext(os.path.basename(model_path))[0]
     parameters = extract_parameters_from_gguf(model_path)
     if parameters is None:
         parameters = extract_parameters_from_name(model_name)
