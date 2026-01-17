@@ -638,7 +638,36 @@ def upload_to_github():
         if not os.path.exists("docs/leaderboard.json"):
             print("⚠️ docs/leaderboard.json not found. Skipping upload.")
             return
-        
+
+        # Determine current branch
+        try:
+            branch_proc = subprocess.run(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            current_branch = branch_proc.stdout.strip()
+        except subprocess.CalledProcessError:
+            current_branch = None
+
+        # Pull remote changes first to merge any updates that occurred while benchmarking
+        if current_branch:
+            try:
+                pull_proc = subprocess.run([
+                    "git", "pull", "origin", current_branch
+                ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                # success - continue
+            except subprocess.CalledProcessError as e:
+                stderr = e.stderr or ""
+                # If there are merge conflicts, abort upload and notify the user
+                if "CONFLICT" in stderr or "Automatic merge failed" in stderr or "Merge conflict" in stderr:
+                    print("⚠️ Git merge conflicts detected after pulling remote changes.")
+                    print("   Please resolve conflicts for 'docs/leaderboard.json' and re-run the benchmark.", file=sys.stderr)
+                    return
+                else:
+                    print(f"⚠️ Git pull failed: {stderr.strip()}", file=sys.stderr)
+                    return
+
+        # Only commit+push if the file actually changed compared to HEAD
         result = subprocess.run(
             ["git", "diff", "--quiet", "docs/leaderboard.json"],
             capture_output=True
@@ -646,7 +675,7 @@ def upload_to_github():
         if result.returncode == 0:
             print("ℹ️ No changes to docs/leaderboard.json. Skipping upload.")
             return
-        
+
         subprocess.run(["git", "add", "docs/leaderboard.json"], check=True)
         commit_msg = f"Update leaderboard: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         subprocess.run(["git", "commit", "-m", commit_msg], check=True)
