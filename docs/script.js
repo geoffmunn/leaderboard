@@ -125,6 +125,8 @@ function renderTable() {
     if (filters.ram && ramStr !== filters.ram) return;
     
     const row = document.createElement('tr');
+    // store model name on the row for later chart-row linking
+    row.dataset.modelName = entry.model_name || '';
     if (isFailed) row.classList.add('failed');
     
     const config = entry.hardware_config;
@@ -243,6 +245,57 @@ function renderChart() {
         legend: { display: false }
       }
     }
+  });
+
+  // Save original colors for later restore and initialize per-point radii
+  if (window.perfChart) {
+    const ds = window.perfChart.data.datasets[0];
+    // ensure backgroundColor and borderColor are arrays
+    ds._origBg = Array.isArray(ds.backgroundColor) ? ds.backgroundColor.slice() : Array(ds.data.length).fill(ds.backgroundColor);
+    ds._origBorder = Array.isArray(ds.borderColor) ? ds.borderColor.slice() : Array(ds.data.length).fill(ds.borderColor);
+    ds.radius = ds.data.map(() => 6);
+  }
+
+  // Helpers to highlight points by index(es)
+  function setChartHighlight(indices) {
+    const chart = window.perfChart;
+    if (!chart) return;
+    const ds = chart.data.datasets[0];
+    const defaultRadius = 6;
+    const highlightRadius = 10;
+    const highlightBg = 'rgba(230,126,34,0.95)';
+    const highlightBorder = 'rgba(189,74,0,1)';
+
+    ds.radius = ds.data.map((_, i) => indices.includes(i) ? highlightRadius : defaultRadius);
+    ds.backgroundColor = ds._origBg.map((c, i) => indices.includes(i) ? highlightBg : c);
+    ds.borderColor = ds._origBorder.map((c, i) => indices.includes(i) ? highlightBorder : c);
+    chart.update('none');
+  }
+
+  function clearChartHighlight() {
+    const chart = window.perfChart;
+    if (!chart) return;
+    const ds = chart.data.datasets[0];
+    ds.radius = ds.data.map(() => 6);
+    ds.backgroundColor = ds._origBg.slice();
+    ds.borderColor = ds._origBorder.slice();
+    chart.update('none');
+  }
+
+  // Attach hover listeners to table rows to link with chart points
+  const rows = document.querySelectorAll('#table-body tr');
+  rows.forEach(row => {
+    row.addEventListener('mouseenter', () => {
+      const model = row.dataset.modelName;
+      if (!model || !window.perfChart) return;
+      const labels = window.perfChart.data.labels || [];
+      const indices = [];
+      labels.forEach((lab, idx) => { if (lab === model) indices.push(idx); });
+      if (indices.length) setChartHighlight(indices);
+    });
+    row.addEventListener('mouseleave', () => {
+      clearChartHighlight();
+    });
   });
 }
 
