@@ -5634,6 +5634,85 @@
     }
   },
   {
+    "model_name": "Qwen3-14B-f16-imatrix:Q3_K_S.gguf",
+    "parameters": "14B",
+    "file_size_mb": 6348.7110595703125,
+    "avg_tokens_per_sec": 0.325,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 6572.5625,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
+    "total_exec_time_sec": 1379.9540243148804,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 6568.8984375,
+        "exec_time_sec": 102.1255271434784
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 6569.68359375,
+        "exec_time_sec": 144.7509458065033
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 6569.9296875,
+        "exec_time_sec": 163.40544271469116
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 6569.55078125,
+        "exec_time_sec": 173.84880423545837
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 6571.62109375,
+        "exec_time_sec": 194.92972016334534
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 6572.5625,
+        "exec_time_sec": 208.08340525627136
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 6569.3671875,
+        "exec_time_sec": 196.02594828605652
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 6569.35546875,
+        "exec_time_sec": 196.78423070907593
+      }
+    ],
+    "date_checked": "2026-01-17T13:52:49.333679",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": false,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0 --no-ppl",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
     "model_name": "Qwen3-14B-f16-imatrix:Q3_K_HIFI.gguf",
     "parameters": "14B",
     "file_size_mb": 7139.1309814453125,
