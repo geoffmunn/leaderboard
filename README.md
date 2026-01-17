@@ -65,3 +65,23 @@ This is a Python script that benchmarks quantized models using `llama.cpp`'s `ll
 The script prioritizes **real user experience**—measuring how quickly a model responds during actual usage rather than synthetic benchmarks. This aligns with your focus on practical quantization tradeoffs (speed vs. quality vs. size).
 
 It **DOES NOT** test for the quality of the answer, highly compressed models might be very fast but return rubbish results. The quality of a model is not part of this benchmarking tool.
+
+## GitHub Uploads
+
+If you are running this on your own computer and want to upload the results, you'll need to set up a SSH Key.
+
+First, run this:
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+Then add the provided key details to your GitHub account:
+
+```(GitHub → Settings → SSH Keys)[https://github.com/settings/keys]```
+
+And then convert your local repository to use SSH keys (if you haven't already done this) - make sure you change the username and repository name.
+
+```bash
+git remote set-url origin git@github.com:yourname/yourrepo.git
+```
