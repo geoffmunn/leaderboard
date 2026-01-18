@@ -1108,6 +1108,86 @@
     }
   },
   {
+    "model_name": "Qwen3-0.6B-f16:Q6_K",
+    "parameters": "3B",
+    "file_size_mb": 593.885009765625,
+    "avg_tokens_per_sec": 30.271428571428572,
+    "outliers_detected": 1,
+    "perplexity": null,
+    "peak_memory_mb": 792.046875,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-0.6B-f16",
+    "total_exec_time_sec": 16.798413276672363,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 50.4,
+        "peak_memory_mb": 789.953125,
+        "exec_time_sec": 2.1809051036834717,
+        "is_outlier": true
+      },
+      {
+        "tokens_per_sec": 28.3,
+        "peak_memory_mb": 791.84375,
+        "exec_time_sec": 2.102612018585205
+      },
+      {
+        "tokens_per_sec": 34.2,
+        "peak_memory_mb": 791.921875,
+        "exec_time_sec": 2.0835890769958496
+      },
+      {
+        "tokens_per_sec": 29.5,
+        "peak_memory_mb": 791.875,
+        "exec_time_sec": 2.087965250015259
+      },
+      {
+        "tokens_per_sec": 29.6,
+        "peak_memory_mb": 791.984375,
+        "exec_time_sec": 2.0856149196624756
+      },
+      {
+        "tokens_per_sec": 30.3,
+        "peak_memory_mb": 792.046875,
+        "exec_time_sec": 2.0856587886810303
+      },
+      {
+        "tokens_per_sec": 26.8,
+        "peak_memory_mb": 791.9375,
+        "exec_time_sec": 2.0768680572509766
+      },
+      {
+        "tokens_per_sec": 33.2,
+        "peak_memory_mb": 791.921875,
+        "exec_time_sec": 2.0952000617980957
+      }
+    ],
+    "date_checked": "2026-01-18T17:24:09.739649",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": true,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "ARM Device",
+      "cpu": "8x arm",
+      "ram_gb": 16.0,
+      "ram_human": "16.0 GB RAM",
+      "os": "Darwin 25.2.0"
+    }
+  },
+  {
     "model_name": "Qwen3-0.6B-f16-imatrix:Q5_K_M",
     "parameters": "3B",
     "file_size_mb": 525.83544921875,
