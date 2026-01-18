@@ -328,11 +328,11 @@ def calculate_perplexity(model_path, ctx_size, threads, batch_size, gpu_layers):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                timeout=300,  # 5 minute timeout
+                timeout=6000,  # 100 minute timeout
                 check=False  # Don't raise on non-zero exit
             )
         except subprocess.TimeoutExpired:
-            print("  PPL: TIMEOUT (5 minutes exceeded)", flush=True)
+            print("  PPL: TIMEOUT (100 minutes exceeded)", flush=True)
             return None
         
         elapsed = time.time() - start_time
