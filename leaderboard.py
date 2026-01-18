@@ -508,7 +508,24 @@ def benchmark_model(
     else:
         print("  Skipping perplexity calculation (--no-ppl)", flush=True)
 
-    model_name = os.path.basename(model_path)
+    # Normalize model name: remove extension and decode percent-encodings
+    # (e.g. convert "%3A" or double-encoded "%253A" into ":") so
+    # we get a consistent format like `Qwen3-0.6B-f16-imatrix:Q4_K_M`.
+    try:
+        from urllib.parse import unquote
+        base = os.path.splitext(os.path.basename(model_path))[0]
+        # If it looks like a percent-encoded colon, decode once or twice
+        if '%3a' in base.lower() or '%253a' in base.lower():
+            decoded = unquote(base)
+            # handle double-encoded values ("%253A" -> "%3A" -> ":")
+            if '%3a' in decoded.lower() or '%253a' in decoded.lower():
+                decoded = unquote(decoded)
+            model_name = decoded
+        else:
+            model_name = base
+    except Exception:
+        # Fallback to basename if anything goes wrong
+        model_name = os.path.splitext(os.path.basename(model_path))[0]
     parameters = extract_parameters_from_gguf(model_path)
     if parameters is None:
         parameters = extract_parameters_from_name(model_name)
@@ -621,7 +638,36 @@ def upload_to_github():
         if not os.path.exists("docs/leaderboard.json"):
             print("⚠️ docs/leaderboard.json not found. Skipping upload.")
             return
-        
+
+        # Determine current branch
+        try:
+            branch_proc = subprocess.run(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            current_branch = branch_proc.stdout.strip()
+        except subprocess.CalledProcessError:
+            current_branch = None
+
+        # Pull remote changes first to merge any updates that occurred while benchmarking
+        if current_branch:
+            try:
+                pull_proc = subprocess.run([
+                    "git", "pull", "origin", current_branch
+                ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                # success - continue
+            except subprocess.CalledProcessError as e:
+                stderr = e.stderr or ""
+                # If there are merge conflicts, abort upload and notify the user
+                if "CONFLICT" in stderr or "Automatic merge failed" in stderr or "Merge conflict" in stderr:
+                    print("⚠️ Git merge conflicts detected after pulling remote changes.")
+                    print("   Please resolve conflicts for 'docs/leaderboard.json' and re-run the benchmark.", file=sys.stderr)
+                    return
+                else:
+                    print(f"⚠️ Git pull failed: {stderr.strip()}", file=sys.stderr)
+                    return
+
+        # Only commit+push if the file actually changed compared to HEAD
         result = subprocess.run(
             ["git", "diff", "--quiet", "docs/leaderboard.json"],
             capture_output=True
@@ -629,7 +675,7 @@ def upload_to_github():
         if result.returncode == 0:
             print("ℹ️ No changes to docs/leaderboard.json. Skipping upload.")
             return
-        
+
         subprocess.run(["git", "add", "docs/leaderboard.json"], check=True)
         commit_msg = f"Update leaderboard: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         subprocess.run(["git", "commit", "-m", commit_msg], check=True)
