@@ -554,6 +554,85 @@
     }
   },
   {
+    "model_name": "Qwen3-0.6B-f16:Q3_K_M",
+    "parameters": "3B",
+    "file_size_mb": 394.801025390625,
+    "avg_tokens_per_sec": 33.95,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 684.9375,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-0.6B-f16",
+    "total_exec_time_sec": 19.461548566818237,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 18.9,
+        "peak_memory_mb": 652.15625,
+        "exec_time_sec": 3.7306110858917236
+      },
+      {
+        "tokens_per_sec": 38.3,
+        "peak_memory_mb": 684.71875,
+        "exec_time_sec": 2.1013760566711426
+      },
+      {
+        "tokens_per_sec": 20.8,
+        "peak_memory_mb": 678.984375,
+        "exec_time_sec": 4.130429983139038
+      },
+      {
+        "tokens_per_sec": 45.4,
+        "peak_memory_mb": 684.125,
+        "exec_time_sec": 1.594508171081543
+      },
+      {
+        "tokens_per_sec": 29.5,
+        "peak_memory_mb": 684.9375,
+        "exec_time_sec": 2.604464054107666
+      },
+      {
+        "tokens_per_sec": 42.5,
+        "peak_memory_mb": 684.390625,
+        "exec_time_sec": 1.6179571151733398
+      },
+      {
+        "tokens_per_sec": 33.0,
+        "peak_memory_mb": 684.109375,
+        "exec_time_sec": 2.1001980304718018
+      },
+      {
+        "tokens_per_sec": 43.2,
+        "peak_memory_mb": 684.125,
+        "exec_time_sec": 1.5820040702819824
+      }
+    ],
+    "date_checked": "2026-01-18T15:09:36.600687",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": true,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "ARM Device",
+      "cpu": "8x arm",
+      "ram_gb": 16.0,
+      "ram_human": "16.0 GB RAM",
+      "os": "Darwin 25.2.0"
+    }
+  },
+  {
     "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_M.gguf",
     "parameters": "0.6B",
     "file_size_mb": 394.80126953125,
