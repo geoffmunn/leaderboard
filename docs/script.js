@@ -5,6 +5,36 @@ function getEntryDevice(entry) {
   return (typeof d === 'string' && d.trim().length > 0) ? d.trim() : 'N/A';
 }
 
+// Helpers to format and parse size bucket labels (e.g. "600MB - 1GB")
+function _toMB(str) {
+  if (!str) return NaN;
+  const s = String(str).trim().toLowerCase();
+  if (s.endsWith('gb')) {
+    return parseFloat(s.replace(/gb$/,'').trim()) * 1000;
+  }
+  // assume MB
+  return parseFloat(s.replace(/mb$/,'').trim());
+}
+
+function bucketLabel(startMB, endMB) {
+  const fmt = (mb) => {
+    if (mb % 1000 === 0) return (mb/1000) + 'GB';
+    if (mb >= 1000) return (mb/1000).toFixed(1).replace(/\.0$/, '') + 'GB';
+    return Math.round(mb) + 'MB';
+  };
+  return `${fmt(startMB)} - ${fmt(endMB)}`;
+}
+
+function parseBucketLabel(label) {
+  if (!label) return null;
+  const parts = label.split(' - ');
+  if (parts.length !== 2) return null;
+  const start = _toMB(parts[0]);
+  const end = _toMB(parts[1]);
+  if (isNaN(start) || isNaN(end)) return null;
+  return [start, end];
+}
+
 function getFilters() {
   const getVal = id => {
     const el = document.getElementById(id);
@@ -75,7 +105,28 @@ function getFilters() {
 
       addOptions('filter-model', alphaSort(Array.from(models)));
       addOptions('filter-params', alphaSort(Array.from(params)));
-      addOptions('filter-size', alphaSort(Array.from(sizes)));
+      // Build size buckets: 0-300MB, 300-600MB, 600-1GB, then 500MB increments (1GB-1.5GB, 1.5GB-2GB, ...)
+      (function buildSizeBuckets() {
+        // find max file size in MB
+        let maxSize = 0;
+        leaderboardData.forEach(e => {
+          if (e && typeof e.file_size_mb === 'number' && !isNaN(e.file_size_mb)) {
+            maxSize = Math.max(maxSize, e.file_size_mb);
+          }
+        });
+        // ensure at least 1GB range shown
+        const minCover = Math.max(1000, Math.ceil(maxSize));
+
+        const buckets = [[0,300],[300,600],[600,1000]];
+        let start = 1000;
+        const maxCeil = Math.ceil(minCover / 500) * 500;
+        while (start < maxCeil) {
+          buckets.push([start, start + 500]);
+          start += 500;
+        }
+        const labels = buckets.map(b => bucketLabel(b[0], b[1]));
+        addOptions('filter-size', labels);
+      })();
       // Speed select is used as a sort order control rather than filtering by exact speed value.
       const speedSelect = document.getElementById('filter-speed');
       if (speedSelect) {
@@ -138,7 +189,18 @@ function getFilters() {
 
         if (filters.model && entry.model_name !== filters.model) return;
         if (filters.params && (entry.parameters || 'N/A') !== filters.params) return;
-        if (filters.size && sizeStr !== filters.size) return;
+        if (filters.size) {
+          const range = parseBucketLabel(filters.size);
+          if (range) {
+            const fs = entry.file_size_mb;
+            if (fs == null) return;
+            const [s,e] = range;
+            if (!(fs >= s && fs <= e)) return;
+          } else {
+            // fallback to exact string match (legacy)
+            if (sizeStr !== filters.size) return;
+          }
+        }
         // PPL select controls sort order rather than filtering by exact PPL value
         if (filters.peakRam && peakStr !== filters.peakRam) return;
         if (filters.device && entryDevice !== filters.device) return;
@@ -247,7 +309,17 @@ function getFilters() {
 
         // Apply filters (PPL is only a table sort control)
         if (filters.model && e.model_name !== filters.model) return false;
-        if (filters.size && sizeStr !== filters.size) return false;
+        if (filters.size) {
+          const range = parseBucketLabel(filters.size);
+          if (range) {
+            const fs = e.file_size_mb;
+            if (fs == null) return false;
+            const [s,e2] = range;
+            if (!(fs >= s && fs <= e2)) return false;
+          } else {
+            if (sizeStr !== filters.size) return false;
+          }
+        }
         if (filters.peakRam && peakStr !== filters.peakRam) return false;
         if (filters.device && entryDevice !== filters.device) return false;
         if (filters.ram && ramStr !== filters.ram) return false;
