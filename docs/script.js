@@ -161,15 +161,26 @@ function getFilters() {
             if (cmp !== 0) return cmp;
           }
 
-          // PPL comparison (if requested)
+          // PPL comparison (if requested) — always place N/A (missing) at the end
           if (filters.ppl === 'low-high' || filters.ppl === 'high-low') {
-            const aa = (a.perplexity != null) ? a.perplexity : (filters.ppl === 'low-high' ? Infinity : -Infinity);
-            const bb = (b.perplexity != null) ? b.perplexity : (filters.ppl === 'low-high' ? Infinity : -Infinity);
-            let cmp2 = 0;
-            if (aa < bb) cmp2 = -1;
-            else if (aa > bb) cmp2 = 1;
-            if (filters.ppl === 'high-low') cmp2 = -cmp2;
-            if (cmp2 !== 0) return cmp2;
+            const aHas = (a.perplexity != null);
+            const bHas = (b.perplexity != null);
+            if (!aHas && !bHas) {
+              // both missing -> equal
+            } else if (!aHas) {
+              // a missing -> a should go after b
+              return 1;
+            } else if (!bHas) {
+              // b missing -> b should go after a
+              return -1;
+            } else {
+              // both have numeric PPL
+              let cmp2 = 0;
+              if (a.perplexity < b.perplexity) cmp2 = -1;
+              else if (a.perplexity > b.perplexity) cmp2 = 1;
+              if (filters.ppl === 'high-low') cmp2 = -cmp2;
+              if (cmp2 !== 0) return cmp2;
+            }
           }
 
           return 0;
