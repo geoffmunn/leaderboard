@@ -149,7 +149,25 @@ function getFilters() {
         if (['', 'low-high', 'high-low'].includes(sel)) pplSelect.value = sel;
       }
 
-      addOptions('filter-peak-ram', alphaSort(Array.from(peaks)));
+      // Build Peak RAM buckets in 250MB increments: 0-250, 250-500, ... up to max
+      (function buildPeakBuckets() {
+        let maxPeak = 0;
+        leaderboardData.forEach(e => {
+          if (e && typeof e.peak_memory_mb === 'number' && !isNaN(e.peak_memory_mb)) {
+            maxPeak = Math.max(maxPeak, e.peak_memory_mb);
+          }
+        });
+        const minCover = Math.max(250, Math.ceil(maxPeak));
+        const buckets = [];
+        let start = 0;
+        const maxCeil = Math.ceil(minCover / 250) * 250;
+        while (start < maxCeil) {
+          buckets.push([start, start + 250]);
+          start += 250;
+        }
+        const labels = buckets.map(b => bucketLabel(b[0], b[1]));
+        addOptions('filter-peak-ram', labels);
+      })();
       addOptions('filter-device', alphaSort(Array.from(devices)));
       addOptions('filter-ram', alphaSort(Array.from(rams)));
     }
@@ -202,7 +220,17 @@ function getFilters() {
           }
         }
         // PPL select controls sort order rather than filtering by exact PPL value
-        if (filters.peakRam && peakStr !== filters.peakRam) return;
+        if (filters.peakRam) {
+          const range = parseBucketLabel(filters.peakRam);
+          if (range) {
+            const pm = entry.peak_memory_mb;
+            if (pm == null) return;
+            const [s,e] = range;
+            if (!(pm >= s && pm <= e)) return;
+          } else {
+            if (peakStr !== filters.peakRam) return;
+          }
+        }
         if (filters.device && entryDevice !== filters.device) return;
         if (filters.ram && ramStr !== filters.ram) return;
 
@@ -333,7 +361,17 @@ function getFilters() {
             if (sizeStr !== filters.size) return false;
           }
         }
-        if (filters.peakRam && peakStr !== filters.peakRam) return false;
+        if (filters.peakRam) {
+          const range = parseBucketLabel(filters.peakRam);
+          if (range) {
+            const pm = e.peak_memory_mb;
+            if (pm == null) return false;
+            const [s,e2] = range;
+            if (!(pm >= s && pm <= e2)) return false;
+          } else {
+            if (peakStr !== filters.peakRam) return false;
+          }
+        }
         if (filters.device && entryDevice !== filters.device) return false;
         if (filters.ram && ramStr !== filters.ram) return false;
         return true;
