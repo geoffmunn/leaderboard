@@ -272,18 +272,31 @@ function getFilters() {
           ? `<code><a href="${entry.huggingface_repo}" target="_blank" rel="noopener noreferrer">${entry.model_name}</a></code>`
           : `<code>${entry.model_name}</code>`;
 
-        row.innerHTML = `
-          <td>${entryDevice}</td>
-          <td>${ramStr}</td>
-          <td>${modelNameCell}</td>
-          <td>${entry.parameters || 'N/A'}</td>
-          <td>${peakStr}</td>
-          <td>${speedStr}</td>
-          <td>${sizeStr}</td>
-          <td>${pplStr}</td>
-          <td>${formatDate(entry.date_checked)}</td>
-        `;
+        // Build row cells dynamically based on current table header selects.
+        // This ensures columns always align with headers even if headers are reordered.
+        const headerThs = Array.from(document.querySelectorAll('#leaderboard thead th'));
+        const cellParts = headerThs.map(th => {
+          const sel = th.querySelector('select');
+          if (sel && sel.id) {
+            switch (sel.id) {
+              case 'filter-device': return `<td>${entryDevice}</td>`;
+              case 'filter-ram': return `<td>${ramStr}</td>`;
+              case 'filter-model': return `<td>${modelNameCell}</td>`;
+              case 'filter-params': return `<td>${entry.parameters || 'N/A'}</td>`;
+              case 'filter-peak-ram': return `<td>${peakStr}</td>`;
+              case 'filter-speed': return `<td>${speedStr}</td>`;
+              case 'filter-size': return `<td>${sizeStr}</td>`;
+              case 'filter-ppl': return `<td>${pplStr}</td>`;
+              default: return `<td></td>`;
+            }
+          }
+          // No select: probably the Date Checked header
+          const txt = (th.textContent || '').trim().toLowerCase();
+          if (txt.includes('date')) return `<td>${formatDate(entry.date_checked)}</td>`;
+          return `<td></td>`;
+        });
 
+        row.innerHTML = cellParts.join('');
         tbody.appendChild(row);
       });
     }
