@@ -12,6 +12,7 @@ Features:
 - Saves to ./docs/leaderboard.json
 - Includes "Date Checked" timestamp
 - Optional GitHub auto-upload
+- Relaxed outlier detection (keeps normal variations, catches broken quants)
 """
 
 import argparse
@@ -60,25 +61,27 @@ PPL_PROMPT = "The quick brown fox jumps over the lazy dog."
 def get_model_size_mb(model_path: str) -> float:
     return os.path.getsize(model_path) / (1024 * 1024)
 
-def extract_parameters_from_gguf(model_path: str) -> str:
-    """Extract parameter count from GGUF metadata (new API)."""
-    if not GGUF_AVAILABLE:
-        return None
-    try:
-        reader = GGUFReader(model_path)
-        if "general.parameter_count" in reader.fields:
-            count = reader.fields["general.parameter_count"].parts[-1]
-            if isinstance(count, int):
-                if count >= 10**9:
-                    return f"{count / 1e9:.1f}B"
-                elif count >= 10**6:
-                    return f"{count / 1e6:.1f}M"
-                else:
-                    return f"{count}"
-        return None
-    except Exception as e:
-        print(f"GGUF metadata read error: {e}", file=sys.stderr)
-        return None
+def extract_parameters_from_name(model_name: str) -> str:
+    """Fallback: extract from filename."""
+    base_name = os.path.splitext(model_name)[0]
+    match = re.search(r'(\d+\.?\d*[BbMm])', base_name)
+    if match:
+        return match.group(1).upper()
+    if any(x in base_name for x in ['0.5', '0.6', 'tiny']):
+        return "0.6B"
+    elif '1.5' in base_name:
+        return "1.5B"
+    elif '1.7' in base_name:
+        return "1.7B"
+    elif '3' in base_name and not any(x in base_name for x in ['1.7', '7', '13', '34']):
+        return "3B"
+    elif '7' in base_name and not any(x in base_name for x in ['1.7', '17', '70']):
+        return "7B"
+    elif '13' in base_name:
+        return "13B"
+    elif '34' in base_name:
+        return "34B"
+    return "Unknown"
 
 def extract_huggingface_repo_from_gguf(model_path: str) -> str:
     """Extract HuggingFace repository URL from GGUF metadata if available."""
@@ -391,48 +394,51 @@ def calculate_perplexity(model_path, ctx_size, threads, batch_size, gpu_layers):
 
 def detect_outliers(values: list) -> list:
     """
-    Detect outliers in a list of values using IQR method and threshold check.
-    Returns a list of indices that are outliers.
+    Detect outliers using a relaxed IQR method suitable for real-world benchmarking.
+    Only flags values that are clearly broken (e.g., Q2_K reporting 100+ t/s).
     """
     if len(values) < 3:
-        return []  # Need at least 3 values to detect outliers
+        return []
     
-    # Convert to list of tuples (index, value) for tracking
-    indexed_values = [(i, v) for i, v in enumerate(values)]
+    # Sort values and calculate basic stats
+    sorted_vals = sorted(values)
+    n = len(sorted_vals)
     
-    # Sort by value
-    sorted_values = sorted(indexed_values, key=lambda x: x[1])
+    # Use median instead of mean (more robust to outliers)
+    median_idx = n // 2
+    median = sorted_vals[median_idx]
     
-    # Calculate quartiles
-    n = len(sorted_values)
+    # Calculate IQR but use much more relaxed thresholds
     q1_idx = n // 4
     q3_idx = (3 * n) // 4
-    
-    q1 = sorted_values[q1_idx][1]
-    q3 = sorted_values[q3_idx][1]
+    q1 = sorted_vals[q1_idx]
+    q3 = sorted_vals[q3_idx]
     iqr = q3 - q1
     
-    # Calculate median
-    median_idx = n // 2
-    median = sorted_values[median_idx][1]
-    
-    # Find outliers using IQR method (values outside Q1 - 1.5*IQR to Q3 + 1.5*IQR)
-    outlier_indices = set()
+    # Only flag extreme outliers (5x IQR instead of 1.5x)
     if iqr > 0:
-        lower_bound = q1 - 1.5 * iqr
-        upper_bound = q3 + 1.5 * iqr
-        for idx, val in indexed_values:
-            if val < lower_bound or val > upper_bound:
-                outlier_indices.add(idx)
+        lower_bound = q1 - 5.0 * iqr
+        upper_bound = q3 + 5.0 * iqr
+    else:
+        # If all values are similar, use median-based bounds
+        lower_bound = median * 0.5  # 50% below median
+        upper_bound = median * 3.0  # 300% above median
     
-    # Also check for values that are more than 10x the median (catches extreme cases)
-    for idx, val in indexed_values:
-        if median > 0 and val > 10 * median:
-            outlier_indices.add(idx)
-        elif median > 0 and val < median / 10:
-            outlier_indices.add(idx)
+    # Additional safety: never flag values within reasonable range
+    # For small models on good hardware, 5-50 t/s is normal
+    # Only flag if truly extreme (e.g., Q2_K reporting 200+ t/s)
+    absolute_lower = min(5.0, median * 0.3)  # Never flag below 5 t/s unless median is very low
+    absolute_upper = max(80.0, median * 4.0)  # Only flag above 80 t/s or 4x median
     
-    return list(outlier_indices)
+    final_lower = max(lower_bound, absolute_lower)
+    final_upper = min(upper_bound, absolute_upper)
+    
+    outlier_indices = []
+    for i, val in enumerate(values):
+        if val < final_lower or val > final_upper:
+            outlier_indices.append(i)
+    
+    return outlier_indices
 
 def benchmark_model(
     model_path: str,
@@ -606,7 +612,7 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
         try:
             with open(leaderboard_path, 'r') as f:
                 leaderboard = json.load(f)
-        except json.JSONDecodeError:
+        except json.JSONDecode, 
             print(f"WARNING: Corrupted leaderboard.json. Starting fresh.", file=sys.stderr)
     
     # Use unique key (model + hardware) for duplicate detection
