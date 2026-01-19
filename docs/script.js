@@ -147,40 +147,39 @@ function getFilters() {
         visibleEntries.push(entry);
       });
 
-      // Combined sorting: Speed primary (if selected), then PPL secondary (if selected).
+      // Combined sorting: If both PPL and Speed are selected, PPL takes precedence
+      // (so a user's PPL sort choice remains effective even after selecting Speed).
       if (filters.speed || filters.ppl) {
         visibleEntries.sort((a, b) => {
-          // Speed comparison (if requested)
-          if (filters.speed === 'low-high' || filters.speed === 'high-low') {
-            const aa = (a.avg_tokens_per_sec != null) ? a.avg_tokens_per_sec : (filters.speed === 'low-high' ? Infinity : -Infinity);
-            const bb = (b.avg_tokens_per_sec != null) ? b.avg_tokens_per_sec : (filters.speed === 'low-high' ? Infinity : -Infinity);
-            let cmp = 0;
-            if (aa < bb) cmp = -1;
-            else if (aa > bb) cmp = 1;
-            if (filters.speed === 'high-low') cmp = -cmp;
-            if (cmp !== 0) return cmp;
-          }
-
-          // PPL comparison (if requested) — always place N/A (missing) at the end
+          // If PPL sort selected, compare by PPL first (missing values go to end)
           if (filters.ppl === 'low-high' || filters.ppl === 'high-low') {
             const aHas = (a.perplexity != null);
             const bHas = (b.perplexity != null);
             if (!aHas && !bHas) {
-              // both missing -> equal
+              // equal by PPL, continue to next key
             } else if (!aHas) {
-              // a missing -> a should go after b
-              return 1;
+              return 1; // a (N/A) goes after b
             } else if (!bHas) {
-              // b missing -> b should go after a
-              return -1;
+              return -1; // b (N/A) goes after a
             } else {
               // both have numeric PPL
-              let cmp2 = 0;
-              if (a.perplexity < b.perplexity) cmp2 = -1;
-              else if (a.perplexity > b.perplexity) cmp2 = 1;
-              if (filters.ppl === 'high-low') cmp2 = -cmp2;
-              if (cmp2 !== 0) return cmp2;
+              let cmpP = 0;
+              if (a.perplexity < b.perplexity) cmpP = -1;
+              else if (a.perplexity > b.perplexity) cmpP = 1;
+              if (filters.ppl === 'high-low') cmpP = -cmpP;
+              if (cmpP !== 0) return cmpP;
             }
+          }
+
+          // If Speed sort selected, compare by Speed next
+          if (filters.speed === 'low-high' || filters.speed === 'high-low') {
+            const aa = (a.avg_tokens_per_sec != null) ? a.avg_tokens_per_sec : (filters.speed === 'low-high' ? Infinity : -Infinity);
+            const bb = (b.avg_tokens_per_sec != null) ? b.avg_tokens_per_sec : (filters.speed === 'low-high' ? Infinity : -Infinity);
+            let cmpS = 0;
+            if (aa < bb) cmpS = -1;
+            else if (aa > bb) cmpS = 1;
+            if (filters.speed === 'high-low') cmpS = -cmpS;
+            if (cmpS !== 0) return cmpS;
           }
 
           return 0;
