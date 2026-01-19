@@ -147,30 +147,32 @@ function getFilters() {
         visibleEntries.push(entry);
       });
 
-      // Sort visibleEntries according to Speed or PPL sort selection
-      if (filters.speed === 'low-high') {
+      // Combined sorting: Speed primary (if selected), then PPL secondary (if selected).
+      if (filters.speed || filters.ppl) {
         visibleEntries.sort((a, b) => {
-          const aa = (a.avg_tokens_per_sec != null) ? a.avg_tokens_per_sec : Infinity;
-          const bb = (b.avg_tokens_per_sec != null) ? b.avg_tokens_per_sec : Infinity;
-          return aa - bb;
-        });
-      } else if (filters.speed === 'high-low') {
-        visibleEntries.sort((a, b) => {
-          const aa = (a.avg_tokens_per_sec != null) ? a.avg_tokens_per_sec : -Infinity;
-          const bb = (b.avg_tokens_per_sec != null) ? b.avg_tokens_per_sec : -Infinity;
-          return bb - aa;
-        });
-      } else if (filters.ppl === 'low-high') {
-        visibleEntries.sort((a, b) => {
-          const aa = (a.perplexity != null) ? a.perplexity : Infinity;
-          const bb = (b.perplexity != null) ? b.perplexity : Infinity;
-          return aa - bb;
-        });
-      } else if (filters.ppl === 'high-low') {
-        visibleEntries.sort((a, b) => {
-          const aa = (a.perplexity != null) ? a.perplexity : -Infinity;
-          const bb = (b.perplexity != null) ? b.perplexity : -Infinity;
-          return bb - aa;
+          // Speed comparison (if requested)
+          if (filters.speed === 'low-high' || filters.speed === 'high-low') {
+            const aa = (a.avg_tokens_per_sec != null) ? a.avg_tokens_per_sec : (filters.speed === 'low-high' ? Infinity : -Infinity);
+            const bb = (b.avg_tokens_per_sec != null) ? b.avg_tokens_per_sec : (filters.speed === 'low-high' ? Infinity : -Infinity);
+            let cmp = 0;
+            if (aa < bb) cmp = -1;
+            else if (aa > bb) cmp = 1;
+            if (filters.speed === 'high-low') cmp = -cmp;
+            if (cmp !== 0) return cmp;
+          }
+
+          // PPL comparison (if requested)
+          if (filters.ppl === 'low-high' || filters.ppl === 'high-low') {
+            const aa = (a.perplexity != null) ? a.perplexity : (filters.ppl === 'low-high' ? Infinity : -Infinity);
+            const bb = (b.perplexity != null) ? b.perplexity : (filters.ppl === 'low-high' ? Infinity : -Infinity);
+            let cmp2 = 0;
+            if (aa < bb) cmp2 = -1;
+            else if (aa > bb) cmp2 = 1;
+            if (filters.ppl === 'high-low') cmp2 = -cmp2;
+            if (cmp2 !== 0) return cmp2;
+          }
+
+          return 0;
         });
       }
 
