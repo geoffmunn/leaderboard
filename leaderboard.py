@@ -612,7 +612,7 @@ def save_leaderboard(leaderboard_path: str, new_result: dict):
         try:
             with open(leaderboard_path, 'r') as f:
                 leaderboard = json.load(f)
-        except json.JSONDecode, 
+        except json.JSONDecode:
             print(f"WARNING: Corrupted leaderboard.json. Starting fresh.", file=sys.stderr)
     
     # Use unique key (model + hardware) for duplicate detection
