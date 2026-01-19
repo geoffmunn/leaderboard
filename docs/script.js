@@ -11,20 +11,7 @@ function getFilters() {
     return el ? el.value : '';
   };
   return {
-    let leaderboardData = [];
-
-    function getEntryDevice(entry) {
-      const d = entry?.system_info?.device;
-      return (typeof d === 'string' && d.trim().length > 0) ? d.trim() : 'N/A';
-    }
-
-    function getFilters() {
-      const getVal = id => {
-        const el = document.getElementById(id);
-        return el ? el.value : '';
-      };
-      return {
-        model: getVal('filter-model'),
+    model: getVal('filter-model'),
         params: getVal('filter-params'),
         size: getVal('filter-size'),
         speed: getVal('filter-speed'),
