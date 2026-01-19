@@ -61,6 +61,26 @@ PPL_PROMPT = "The quick brown fox jumps over the lazy dog."
 def get_model_size_mb(model_path: str) -> float:
     return os.path.getsize(model_path) / (1024 * 1024)
 
+# def extract_parameters_from_gguf(model_path: str) -> str:
+#     """Extract parameter count from GGUF metadata (new API)."""
+#     if not GGUF_AVAILABLE:
+#         return None
+#     try:
+#         reader = GGUFReader(model_path)
+#         if "general.parameter_count" in reader.fields:
+#             count = reader.fields["general.parameter_count"].parts[-1]
+#             if isinstance(count, int):
+#                 if count >= 10**9:
+#                     return f"{count / 1e9:.1f}B"
+#                 elif count >= 10**6:
+#                     return f"{count / 1e6:.1f}M"
+#                 else:
+#                     return f"{count}"
+#         return None
+#     except Exception as e:
+#         print(f"GGUF metadata read error: {e}", file=sys.stderr)
+#         return None
+    
 def extract_parameters_from_name(model_name: str) -> str:
     """Fallback: extract from filename."""
     base_name = os.path.splitext(model_name)[0]
@@ -532,7 +552,7 @@ def benchmark_model(
     except Exception:
         # Fallback to basename if anything goes wrong
         model_name = os.path.splitext(os.path.basename(model_path))[0]
-    parameters = extract_parameters_from_gguf(model_path)
+    parameters = extract_parameters_from_name(model_path)
     if parameters is None:
         parameters = extract_parameters_from_name(model_name)
 
