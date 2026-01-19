@@ -76,7 +76,16 @@ function getFilters() {
       addOptions('filter-model', alphaSort(Array.from(models)));
       addOptions('filter-params', alphaSort(Array.from(params)));
       addOptions('filter-size', alphaSort(Array.from(sizes)));
-      addOptions('filter-speed', alphaSort(Array.from(speeds)));
+      // Speed select is used as a sort order control rather than filtering by exact speed value.
+      const speedSelect = document.getElementById('filter-speed');
+      if (speedSelect) {
+        const selSpeed = speedSelect.value;
+        speedSelect.innerHTML = '';
+        const sUn = document.createElement('option'); sUn.value = ''; sUn.textContent = 'Unsorted'; speedSelect.appendChild(sUn);
+        const sLow = document.createElement('option'); sLow.value = 'low-high'; sLow.textContent = 'Lowest to Highest'; speedSelect.appendChild(sLow);
+        const sHigh = document.createElement('option'); sHigh.value = 'high-low'; sHigh.textContent = 'Highest to Lowest'; speedSelect.appendChild(sHigh);
+        if (['', 'low-high', 'high-low'].includes(selSpeed)) speedSelect.value = selSpeed;
+      }
 
       // PPL select is a sort-order control (not a literal filter by PPL value)
       const pplSelect = document.getElementById('filter-ppl');
@@ -130,7 +139,6 @@ function getFilters() {
         if (filters.model && entry.model_name !== filters.model) return;
         if (filters.params && (entry.parameters || 'N/A') !== filters.params) return;
         if (filters.size && sizeStr !== filters.size) return;
-        if (filters.speed && speedStr !== filters.speed) return;
         // PPL select controls sort order rather than filtering by exact PPL value
         if (filters.peakRam && peakStr !== filters.peakRam) return;
         if (filters.device && entryDevice !== filters.device) return;
@@ -139,8 +147,20 @@ function getFilters() {
         visibleEntries.push(entry);
       });
 
-      // Sort visibleEntries according to PPL sort selection
-      if (filters.ppl === 'low-high') {
+      // Sort visibleEntries according to Speed or PPL sort selection
+      if (filters.speed === 'low-high') {
+        visibleEntries.sort((a, b) => {
+          const aa = (a.avg_tokens_per_sec != null) ? a.avg_tokens_per_sec : Infinity;
+          const bb = (b.avg_tokens_per_sec != null) ? b.avg_tokens_per_sec : Infinity;
+          return aa - bb;
+        });
+      } else if (filters.speed === 'high-low') {
+        visibleEntries.sort((a, b) => {
+          const aa = (a.avg_tokens_per_sec != null) ? a.avg_tokens_per_sec : -Infinity;
+          const bb = (b.avg_tokens_per_sec != null) ? b.avg_tokens_per_sec : -Infinity;
+          return bb - aa;
+        });
+      } else if (filters.ppl === 'low-high') {
         visibleEntries.sort((a, b) => {
           const aa = (a.perplexity != null) ? a.perplexity : Infinity;
           const bb = (b.perplexity != null) ? b.perplexity : Infinity;
@@ -216,7 +236,6 @@ function getFilters() {
         // Apply filters (PPL is only a table sort control)
         if (filters.model && e.model_name !== filters.model) return false;
         if (filters.size && sizeStr !== filters.size) return false;
-        if (filters.speed && speedStr !== filters.speed) return false;
         if (filters.peakRam && peakStr !== filters.peakRam) return false;
         if (filters.device && entryDevice !== filters.device) return false;
         if (filters.ram && ramStr !== filters.ram) return false;
