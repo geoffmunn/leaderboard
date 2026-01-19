@@ -275,10 +275,10 @@ function getFilters() {
         row.innerHTML = `
           <td>${modelNameCell}</td>
           <td>${entry.parameters || 'N/A'}</td>
-          <td>${sizeStr}</td>
-          <td>${speedStr}</td>
-          <td>${pplStr}</td>
           <td>${peakStr}</td>
+          <td>${speedStr}</td>
+          <td>${sizeStr}</td>
+          <td>${pplStr}</td>
           <td>${entryDevice}</td>
           <td>${ramStr}</td>
           <td>${formatDate(entry.date_checked)}</td>
