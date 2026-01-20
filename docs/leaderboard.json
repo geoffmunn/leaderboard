@@ -8562,5 +8562,84 @@
       "ram_human": "7.6 GB RAM",
       "os": "Linux 6.12.34+rpt-rpi-v8"
     }
+  },
+  {
+    "model_name": "Qwen3-14B-f16-imatrix:Q4_K_S",
+    "parameters": "14B",
+    "file_size_mb": 8176.3038330078125,
+    "avg_tokens_per_sec": 0.0,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 7389.4296875,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
+    "total_exec_time_sec": 43643.375227451324,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7389.4296875,
+        "exec_time_sec": 5558.7488803863525
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7388.83984375,
+        "exec_time_sec": 5511.068593978882
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7382.29296875,
+        "exec_time_sec": 5501.159749746323
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7371.515625,
+        "exec_time_sec": 5449.81011557579
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7373.5,
+        "exec_time_sec": 5422.052005767822
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7386.0703125,
+        "exec_time_sec": 5458.67524766922
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7388.2421875,
+        "exec_time_sec": 5338.448411941528
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7381.9921875,
+        "exec_time_sec": 5403.4122223854065
+      }
+    ],
+    "date_checked": "2026-01-19T23:33:51.975546",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": false,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0 --no-ppl",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
   }
 ]
