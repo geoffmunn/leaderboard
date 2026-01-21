@@ -950,7 +950,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_M.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_M",
     "parameters": "0.6B",
     "file_size_mb": 394.80126953125,
     "avg_tokens_per_sec": 33.8125,
@@ -3012,7 +3012,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q3_HIFI.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q3_HIFI",
     "parameters": "0.6B",
     "file_size_mb": 313.90478515625,
     "avg_tokens_per_sec": 10.425,
@@ -3157,7 +3157,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q2_K.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q2_K",
     "parameters": "0.6B",
     "file_size_mb": 331.200439453125,
     "avg_tokens_per_sec": 10.075000000000001,
@@ -3223,7 +3223,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q3_K_S.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q3_K_S",
     "parameters": "0.6B",
     "file_size_mb": 371.863525390625,
     "avg_tokens_per_sec": 8.75,
@@ -3289,7 +3289,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_S.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_S",
     "parameters": "0.6B",
     "file_size_mb": 371.86376953125,
     "avg_tokens_per_sec": 8.675,
@@ -3355,7 +3355,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_M.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_M",
     "parameters": "0.6B",
     "file_size_mb": 394.80126953125,
     "avg_tokens_per_sec": 8.6375,
@@ -3421,7 +3421,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q3_K_HIFI.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q3_K_HIFI",
     "parameters": "0.6B",
     "file_size_mb": 445.322509765625,
     "avg_tokens_per_sec": 8.625,
@@ -3487,7 +3487,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q3_K_M.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q3_K_M",
     "parameters": "0.6B",
     "file_size_mb": 394.801025390625,
     "avg_tokens_per_sec": 8.4625,
@@ -3553,7 +3553,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_S.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_S",
     "parameters": "0.6B",
     "file_size_mb": 371.86376953125,
     "avg_tokens_per_sec": 8.2125,
@@ -3619,7 +3619,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_HIFI.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_HIFI",
     "parameters": "0.6B",
     "file_size_mb": 445.32275390625,
     "avg_tokens_per_sec": 8.125,
@@ -3685,7 +3685,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_S.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_S",
     "parameters": "0.6B",
     "file_size_mb": 448.97607421875,
     "avg_tokens_per_sec": 7.975,
@@ -3751,7 +3751,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_M.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_M",
     "parameters": "0.6B",
     "file_size_mb": 461.78857421875,
     "avg_tokens_per_sec": 7.7250000000000005,
@@ -3817,7 +3817,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_M.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_M",
     "parameters": "0.6B",
     "file_size_mb": 394.80126953125,
     "avg_tokens_per_sec": 7.575,
@@ -3883,7 +3883,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q4_K_M.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q4_K_M",
     "parameters": "0.6B",
     "file_size_mb": 461.788330078125,
     "avg_tokens_per_sec": 7.4125000000000005,
@@ -3949,7 +3949,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q4_K_S.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q4_K_S",
     "parameters": "0.6B",
     "file_size_mb": 448.975830078125,
     "avg_tokens_per_sec": 7.3,
@@ -4015,7 +4015,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_HIFI.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_HIFI",
     "parameters": "0.6B",
     "file_size_mb": 493.0669250488281,
     "avg_tokens_per_sec": 6.8375,
@@ -4081,7 +4081,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q4_K_HIFI.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q4_K_HIFI",
     "parameters": "0.6B",
     "file_size_mb": 493.06671142578125,
     "avg_tokens_per_sec": 6.4,
@@ -4147,7 +4147,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q5_K_M.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q5_K_M",
     "parameters": "0.6B",
     "file_size_mb": 525.835205078125,
     "avg_tokens_per_sec": 6.3875,
@@ -4213,7 +4213,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q5_K_S.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q5_K_S",
     "parameters": "0.6B",
     "file_size_mb": 518.397705078125,
     "avg_tokens_per_sec": 6.275000000000001,
@@ -4279,7 +4279,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_HIFI.gguf",
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q4_K_HIFI",
     "parameters": "0.6B",
     "file_size_mb": 493.0669250488281,
     "avg_tokens_per_sec": 6.2124999999999995,
@@ -4345,7 +4345,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q6_K.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q6_K",
     "parameters": "0.6B",
     "file_size_mb": 593.885009765625,
     "avg_tokens_per_sec": 5.412499999999999,
@@ -4411,7 +4411,7 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q8_0.gguf",
+    "model_name": "Qwen3-0.6B-f16:Q8_0",
     "parameters": "0.6B",
     "file_size_mb": 767.472900390625,
     "avg_tokens_per_sec": 4.7875000000000005,
@@ -4477,7 +4477,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q2_K.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q2_K",
     "parameters": "1.7B",
     "file_size_mb": 839.135009765625,
     "avg_tokens_per_sec": 4.125,
@@ -4544,7 +4544,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q3_K_HIFI.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q3_K_HIFI",
     "parameters": "1.7B",
     "file_size_mb": 1124.566650390625,
     "avg_tokens_per_sec": 3.525,
@@ -4679,7 +4679,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16-imatrix:Q3_K_M.gguf",
+    "model_name": "Qwen3-1.7B-f16-imatrix:Q3_K_M",
     "parameters": "1.7B",
     "file_size_mb": 1023.52392578125,
     "avg_tokens_per_sec": 3.4625,
@@ -4745,7 +4745,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16-imatrix:Q3_K_HIFI.gguf",
+    "model_name": "Qwen3-1.7B-f16-imatrix:Q3_K_HIFI",
     "parameters": "1.7B",
     "file_size_mb": 1124.56689453125,
     "avg_tokens_per_sec": 3.4,
@@ -4811,7 +4811,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q3_K_M.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q3_K_M",
     "parameters": "1.7B",
     "file_size_mb": 1023.523681640625,
     "avg_tokens_per_sec": 3.3375,
@@ -4878,7 +4878,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16-imatrix:Q3_K_S.gguf",
+    "model_name": "Qwen3-1.7B-f16-imatrix:Q3_K_S",
     "parameters": "1.7B",
     "file_size_mb": 954.58642578125,
     "avg_tokens_per_sec": 3.2375,
@@ -4944,7 +4944,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16-imatrix:Q4_K_S.gguf",
+    "model_name": "Qwen3-1.7B-f16-imatrix:Q4_K_S",
     "parameters": "1.7B",
     "file_size_mb": 1177.99853515625,
     "avg_tokens_per_sec": 2.975,
@@ -5010,7 +5010,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q4_K_S.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q4_K_S",
     "parameters": "1.7B",
     "file_size_mb": 1177.998291015625,
     "avg_tokens_per_sec": 2.9125,
@@ -5078,7 +5078,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16-imatrix:Q4_K_M.gguf",
+    "model_name": "Qwen3-1.7B-f16-imatrix:Q4_K_M",
     "parameters": "1.7B",
     "file_size_mb": 1223.02978515625,
     "avg_tokens_per_sec": 2.8250000000000006,
@@ -5144,7 +5144,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q4_K_M.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q4_K_M",
     "parameters": "1.7B",
     "file_size_mb": 1223.029541015625,
     "avg_tokens_per_sec": 2.7,
@@ -5212,7 +5212,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q4_K_HIFI.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q4_K_HIFI",
     "parameters": "1.7B",
     "file_size_mb": 1277.7893676757812,
     "avg_tokens_per_sec": 2.5625,
@@ -5280,7 +5280,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q5_K_M.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q5_K_M",
     "parameters": "1.7B",
     "file_size_mb": 1403.623291015625,
     "avg_tokens_per_sec": 2.55,
@@ -5348,7 +5348,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16-imatrix:Q4_K_HIFI.gguf",
+    "model_name": "Qwen3-1.7B-f16-imatrix:Q4_K_HIFI",
     "parameters": "1.7B",
     "file_size_mb": 1277.7895812988281,
     "avg_tokens_per_sec": 2.4625,
@@ -5414,7 +5414,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q5_K_S.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q5_K_S",
     "parameters": "1.7B",
     "file_size_mb": 1377.592041015625,
     "avg_tokens_per_sec": 2.45,
@@ -5482,7 +5482,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q6_K.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q6_K",
     "parameters": "1.7B",
     "file_size_mb": 1595.504150390625,
     "avg_tokens_per_sec": 2.175,
@@ -5550,7 +5550,7 @@
     }
   },
   {
-    "model_name": "Qwen3-1.7B-f16:Q8_0.gguf",
+    "model_name": "Qwen3-1.7B-f16:Q8_0",
     "parameters": "1.7B",
     "file_size_mb": 2064.742431640625,
     "avg_tokens_per_sec": 1.775,
@@ -5618,7 +5618,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16-imatrix:Q3_K_S.gguf",
+    "model_name": "Qwen3-4B-f16-imatrix:Q3_K_S",
     "parameters": "4B",
     "file_size_mb": 1799.5810852050781,
     "avg_tokens_per_sec": 1.6625,
@@ -5684,7 +5684,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q2_K.gguf",
+    "model_name": "Qwen3-4B-f16:Q2_K",
     "parameters": "4B",
     "file_size_mb": 1592.1589660644531,
     "avg_tokens_per_sec": 1.4624999999999997,
@@ -5750,7 +5750,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16-imatrix:Q3_K_M.gguf",
+    "model_name": "Qwen3-4B-f16-imatrix:Q3_K_M",
     "parameters": "4B",
     "file_size_mb": 1979.4638977050781,
     "avg_tokens_per_sec": 1.3874999999999997,
@@ -5816,7 +5816,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16-imatrix:Q3_K_HIFI.gguf",
+    "model_name": "Qwen3-4B-f16-imatrix:Q3_K_HIFI",
     "parameters": "4B",
     "file_size_mb": 1931.6513977050781,
     "avg_tokens_per_sec": 1.3375,
@@ -5882,7 +5882,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16-imatrix:Q4_K_S.gguf",
+    "model_name": "Qwen3-4B-f16-imatrix:Q4_K_S",
     "parameters": "4B",
     "file_size_mb": 2272.901397705078,
     "avg_tokens_per_sec": 1.2375,
@@ -5948,7 +5948,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16-imatrix:Q4_K_HIFI.gguf",
+    "model_name": "Qwen3-4B-f16-imatrix:Q4_K_HIFI",
     "parameters": "4B",
     "file_size_mb": 2369.2515258789062,
     "avg_tokens_per_sec": 1.2374999999999998,
@@ -6014,7 +6014,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16-imatrix:Q4_K_M.gguf",
+    "model_name": "Qwen3-4B-f16-imatrix:Q4_K_M",
     "parameters": "4B",
     "file_size_mb": 2381.592803955078,
     "avg_tokens_per_sec": 1.2125,
@@ -6080,7 +6080,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q3_K_S.gguf",
+    "model_name": "Qwen3-4B-f16:Q3_K_S",
     "parameters": "4B",
     "file_size_mb": 1799.5808410644531,
     "avg_tokens_per_sec": 1.1625,
@@ -6146,7 +6146,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q3_K_M.gguf",
+    "model_name": "Qwen3-4B-f16:Q3_K_M",
     "parameters": "4B",
     "file_size_mb": 1979.4636535644531,
     "avg_tokens_per_sec": 1.1125,
@@ -6212,7 +6212,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q5_K_M.gguf",
+    "model_name": "Qwen3-4B-f16:Q5_K_M",
     "parameters": "4B",
     "file_size_mb": 2755.655059814453,
     "avg_tokens_per_sec": 1.1,
@@ -6278,7 +6278,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q5_K_S.gguf",
+    "model_name": "Qwen3-4B-f16:Q5_K_S",
     "parameters": "4B",
     "file_size_mb": 2692.901153564453,
     "avg_tokens_per_sec": 1.0875,
@@ -6344,7 +6344,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q4_K_S.gguf",
+    "model_name": "Qwen3-4B-f16:Q4_K_S",
     "parameters": "4B",
     "file_size_mb": 2272.901153564453,
     "avg_tokens_per_sec": 1.0625,
@@ -6410,7 +6410,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q3_K_HIFI.gguf",
+    "model_name": "Qwen3-4B-f16:Q3_K_HIFI",
     "parameters": "4B",
     "file_size_mb": 1931.6511535644531,
     "avg_tokens_per_sec": 1.05,
@@ -6476,7 +6476,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q4_K_M.gguf",
+    "model_name": "Qwen3-4B-f16:Q4_K_M",
     "parameters": "4B",
     "file_size_mb": 2381.592559814453,
     "avg_tokens_per_sec": 1.0000000000000002,
@@ -6542,7 +6542,7 @@
     }
   },
   {
-    "model_name": "Qwen3-4B-f16:Q6_K.gguf",
+    "model_name": "Qwen3-4B-f16:Q6_K",
     "parameters": "4B",
     "file_size_mb": 3153.096466064453,
     "avg_tokens_per_sec": 0.8999999999999999,
@@ -6808,7 +6808,7 @@
     }
   },
   {
-    "model_name": "Qwen3-8B-f16-imatrix:Q3_K_HIFI.gguf",
+    "model_name": "Qwen3-8B-f16-imatrix:Q3_K_HIFI",
     "parameters": "8B",
     "file_size_mb": 4088.4429321289062,
     "avg_tokens_per_sec": 0.6875,
@@ -6876,7 +6876,7 @@
     }
   },
   {
-    "model_name": "Qwen3-8B-f16-imatrix:Q3_K_M.gguf",
+    "model_name": "Qwen3-8B-f16-imatrix:Q3_K_M",
     "parameters": "8B",
     "file_size_mb": 3933.1069946289062,
     "avg_tokens_per_sec": 0.675,
@@ -6944,7 +6944,7 @@
     }
   },
   {
-    "model_name": "Qwen3-30B-A3B-Instruct-2507-Q3_K_S-2.70bpw.gguf",
+    "model_name": "Qwen3-30B-A3B-Instruct-2507-Q3_K_S-2.70bpw",
     "parameters": "30B",
     "file_size_mb": 9818.644592285156,
     "avg_tokens_per_sec": 0.6749999999999999,
@@ -7010,7 +7010,7 @@
     }
   },
   {
-    "model_name": "Qwen3-8B-f16-imatrix:Q3_K_S.gguf",
+    "model_name": "Qwen3-8B-f16-imatrix:Q3_K_S",
     "parameters": "8B",
     "file_size_mb": 3594.9819946289062,
     "avg_tokens_per_sec": 0.65,
@@ -7078,7 +7078,7 @@
     }
   },
   {
-    "model_name": "Qwen3-8B-f16-imatrix:Q4_K_S.gguf",
+    "model_name": "Qwen3-8B-f16-imatrix:Q4_K_S",
     "parameters": "8B",
     "file_size_mb": 4579.556213378906,
     "avg_tokens_per_sec": 0.625,
@@ -7146,7 +7146,7 @@
     }
   },
   {
-    "model_name": "Qwen3-8B-f16:Q5_K_M.gguf",
+    "model_name": "Qwen3-8B-f16:Q5_K_M",
     "parameters": "8B",
     "file_size_mb": 5580.055938720703,
     "avg_tokens_per_sec": 0.55,
@@ -7225,7 +7225,7 @@
     }
   },
   {
-    "model_name": "Qwen3-8B-f16:Q5_K_S.gguf",
+    "model_name": "Qwen3-8B-f16:Q5_K_S",
     "parameters": "8B",
     "file_size_mb": 5455.743438720703,
     "avg_tokens_per_sec": 0.55,
@@ -7813,7 +7813,7 @@
     }
   },
   {
-    "model_name": "Qwen3-14B-f16-imatrix:Q3_K_M.gguf",
+    "model_name": "Qwen3-14B-f16-imatrix:Q3_K_M",
     "parameters": "14B",
     "file_size_mb": 6982.1485595703125,
     "avg_tokens_per_sec": 0.325,
@@ -8208,7 +8208,7 @@
     }
   },
   {
-    "model_name": "Qwen3-14B-f16-imatrix:Q4_K_M.gguf",
+    "model_name": "Qwen3-14B-f16-imatrix:Q4_K_M",
     "parameters": "14B",
     "file_size_mb": 8584.741333007812,
     "avg_tokens_per_sec": 0.0,
