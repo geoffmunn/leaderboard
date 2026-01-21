@@ -475,6 +475,85 @@
     }
   },
   {
+    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_HIFI",
+    "parameters": "0.6B",
+    "file_size_mb": 445.32275390625,
+    "avg_tokens_per_sec": 42.0875,
+    "outliers_detected": 0,
+    "perplexity": 6.02,
+    "peak_memory_mb": 796.125,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-0.6B-f16",
+    "total_exec_time_sec": 21.87995719909668,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 35.4,
+        "peak_memory_mb": 777.59375,
+        "exec_time_sec": 3.7060768604278564
+      },
+      {
+        "tokens_per_sec": 40.7,
+        "peak_memory_mb": 795.625,
+        "exec_time_sec": 2.6128032207489014
+      },
+      {
+        "tokens_per_sec": 52.9,
+        "peak_memory_mb": 795.5,
+        "exec_time_sec": 2.0907671451568604
+      },
+      {
+        "tokens_per_sec": 30.3,
+        "peak_memory_mb": 795.671875,
+        "exec_time_sec": 3.1035211086273193
+      },
+      {
+        "tokens_per_sec": 45.3,
+        "peak_memory_mb": 796.015625,
+        "exec_time_sec": 2.5991408824920654
+      },
+      {
+        "tokens_per_sec": 41.8,
+        "peak_memory_mb": 796.125,
+        "exec_time_sec": 2.5925519466400146
+      },
+      {
+        "tokens_per_sec": 44.8,
+        "peak_memory_mb": 795.578125,
+        "exec_time_sec": 2.5867502689361572
+      },
+      {
+        "tokens_per_sec": 45.5,
+        "peak_memory_mb": 795.609375,
+        "exec_time_sec": 2.588345766067505
+      }
+    ],
+    "date_checked": "2026-01-21T17:10:09.813136",
+    "benchmark_config": {
+      "n_predict": 64,
+      "ctx_size": 2048,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 10,
+      "mlock": true,
+      "include_ppl": true,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 64 --ctx-size 2048 --threads 4 --batch-size 512 --gpu-layers 10 --mlock",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 2048,
+      "gpu_layers": 10,
+      "batch_size": 512,
+      "mlock": true
+    },
+    "system_info": {
+      "device": "ARM Device",
+      "cpu": "8x arm",
+      "ram_gb": 16.0,
+      "ram_human": "16.0 GB RAM",
+      "os": "Darwin 25.2.0"
+    }
+  },
+  {
     "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_S",
     "parameters": "0.6B",
     "file_size_mb": 371.86376953125,
@@ -606,85 +685,6 @@
       }
     ],
     "date_checked": "2026-01-18T16:51:36.284338",
-    "benchmark_config": {
-      "n_predict": 32,
-      "ctx_size": 1024,
-      "threads": 4,
-      "batch_size": 512,
-      "gpu_layers": 0,
-      "mlock": false,
-      "include_ppl": true,
-      "num_prompts": 8
-    },
-    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0",
-    "hardware_config": {
-      "threads": 4,
-      "ctx_size": 1024,
-      "gpu_layers": 0,
-      "batch_size": 512,
-      "mlock": false
-    },
-    "system_info": {
-      "device": "ARM Device",
-      "cpu": "8x arm",
-      "ram_gb": 16.0,
-      "ram_human": "16.0 GB RAM",
-      "os": "Darwin 25.2.0"
-    }
-  },
-  {
-    "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_HIFI",
-    "parameters": "0.6B",
-    "file_size_mb": 445.32275390625,
-    "avg_tokens_per_sec": 34.6625,
-    "outliers_detected": 0,
-    "perplexity": null,
-    "peak_memory_mb": 704.25,
-    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-0.6B-f16",
-    "total_exec_time_sec": 16.334630727767944,
-    "per_prompt_results": [
-      {
-        "tokens_per_sec": 39.7,
-        "peak_memory_mb": 683.203125,
-        "exec_time_sec": 2.220676898956299
-      },
-      {
-        "tokens_per_sec": 31.5,
-        "peak_memory_mb": 703.625,
-        "exec_time_sec": 2.077000141143799
-      },
-      {
-        "tokens_per_sec": 34.6,
-        "peak_memory_mb": 703.625,
-        "exec_time_sec": 2.0915181636810303
-      },
-      {
-        "tokens_per_sec": 42.7,
-        "peak_memory_mb": 703.46875,
-        "exec_time_sec": 1.5823991298675537
-      },
-      {
-        "tokens_per_sec": 31.3,
-        "peak_memory_mb": 703.515625,
-        "exec_time_sec": 2.0762810707092285
-      },
-      {
-        "tokens_per_sec": 34.2,
-        "peak_memory_mb": 704.25,
-        "exec_time_sec": 2.0847761631011963
-      },
-      {
-        "tokens_per_sec": 36.7,
-        "peak_memory_mb": 703.40625,
-        "exec_time_sec": 2.109767198562622
-      },
-      {
-        "tokens_per_sec": 26.6,
-        "peak_memory_mb": 703.421875,
-        "exec_time_sec": 2.092211961746216
-      }
-    ],
-    "date_checked": "2026-01-18T11:00:55.102868",
     "benchmark_config": {
       "n_predict": 32,
       "ctx_size": 1024,
