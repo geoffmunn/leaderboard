@@ -237,85 +237,6 @@
     }
   },
   {
-    "model_name": "Qwen3-0.6B-f16:Q3_K_S",
-    "parameters": "0.6B",
-    "file_size_mb": 371.863525390625,
-    "avg_tokens_per_sec": 48.275,
-    "outliers_detected": 0,
-    "perplexity": null,
-    "peak_memory_mb": 570.078125,
-    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-0.6B-f16",
-    "total_exec_time_sec": 14.232830286026001,
-    "per_prompt_results": [
-      {
-        "tokens_per_sec": 35.0,
-        "peak_memory_mb": 568.8125,
-        "exec_time_sec": 2.1340341567993164
-      },
-      {
-        "tokens_per_sec": 41.7,
-        "peak_memory_mb": 569.953125,
-        "exec_time_sec": 1.5758042335510254
-      },
-      {
-        "tokens_per_sec": 36.3,
-        "peak_memory_mb": 569.78125,
-        "exec_time_sec": 2.1042702198028564
-      },
-      {
-        "tokens_per_sec": 71.2,
-        "peak_memory_mb": 569.828125,
-        "exec_time_sec": 1.5864288806915283
-      },
-      {
-        "tokens_per_sec": 55.6,
-        "peak_memory_mb": 570.0625,
-        "exec_time_sec": 1.5805907249450684
-      },
-      {
-        "tokens_per_sec": 42.2,
-        "peak_memory_mb": 570.078125,
-        "exec_time_sec": 1.5849690437316895
-      },
-      {
-        "tokens_per_sec": 37.6,
-        "peak_memory_mb": 569.9375,
-        "exec_time_sec": 2.084313154220581
-      },
-      {
-        "tokens_per_sec": 66.6,
-        "peak_memory_mb": 569.859375,
-        "exec_time_sec": 1.5824198722839355
-      }
-    ],
-    "date_checked": "2026-01-17T20:01:28.002385",
-    "benchmark_config": {
-      "n_predict": 32,
-      "ctx_size": 1024,
-      "threads": 4,
-      "batch_size": 512,
-      "gpu_layers": 0,
-      "mlock": false,
-      "include_ppl": true,
-      "num_prompts": 8
-    },
-    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0",
-    "hardware_config": {
-      "threads": 4,
-      "ctx_size": 1024,
-      "gpu_layers": 0,
-      "batch_size": 512,
-      "mlock": false
-    },
-    "system_info": {
-      "device": "ARM Device",
-      "cpu": "8x arm",
-      "ram_gb": 16.0,
-      "ram_human": "16.0 GB RAM",
-      "os": "Darwin 25.2.0"
-    }
-  },
-  {
     "model_name": "Qwen3-0.6B-f16-imatrix:Q5_K_HIFI",
     "parameters": "0.6B",
     "file_size_mb": 545.5415344238281,
@@ -870,6 +791,85 @@
     }
   },
   {
+    "model_name": "Qwen3-0.6B-f16:Q3_K_S",
+    "parameters": "0.6B",
+    "file_size_mb": 371.863525390625,
+    "avg_tokens_per_sec": 38.6375,
+    "outliers_detected": 0,
+    "perplexity": 5.88,
+    "peak_memory_mb": 684.953125,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-0.6B-f16",
+    "total_exec_time_sec": 23.39506697654724,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 31.6,
+        "peak_memory_mb": 656.984375,
+        "exec_time_sec": 3.6761209964752197
+      },
+      {
+        "tokens_per_sec": 47.0,
+        "peak_memory_mb": 684.453125,
+        "exec_time_sec": 2.5934829711914062
+      },
+      {
+        "tokens_per_sec": 46.8,
+        "peak_memory_mb": 684.359375,
+        "exec_time_sec": 2.5984861850738525
+      },
+      {
+        "tokens_per_sec": 42.7,
+        "peak_memory_mb": 684.453125,
+        "exec_time_sec": 2.6182260513305664
+      },
+      {
+        "tokens_per_sec": 37.5,
+        "peak_memory_mb": 684.75,
+        "exec_time_sec": 3.0930538177490234
+      },
+      {
+        "tokens_per_sec": 34.9,
+        "peak_memory_mb": 684.953125,
+        "exec_time_sec": 3.111689805984497
+      },
+      {
+        "tokens_per_sec": 38.1,
+        "peak_memory_mb": 684.34375,
+        "exec_time_sec": 2.6074202060699463
+      },
+      {
+        "tokens_per_sec": 30.5,
+        "peak_memory_mb": 684.3125,
+        "exec_time_sec": 3.0965869426727295
+      }
+    ],
+    "date_checked": "2026-01-22T20:06:44.779590",
+    "benchmark_config": {
+      "n_predict": 64,
+      "ctx_size": 2048,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 10,
+      "mlock": true,
+      "include_ppl": true,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 64 --ctx-size 2048 --threads 4 --batch-size 512 --gpu-layers 10 --mlock",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 2048,
+      "gpu_layers": 10,
+      "batch_size": 512,
+      "mlock": true
+    },
+    "system_info": {
+      "device": "ARM Device",
+      "cpu": "8x arm",
+      "ram_gb": 16.0,
+      "ram_human": "16.0 GB RAM",
+      "os": "Darwin 25.2.0"
+    }
+  },
+  {
     "model_name": "Qwen3-0.6B-f16-imatrix:Q3_K_S",
     "parameters": "0.6B",
     "file_size_mb": 371.86376953125,
@@ -1239,87 +1239,6 @@
       }
     ],
     "date_checked": "2026-01-18T17:24:09.739649",
-    "benchmark_config": {
-      "n_predict": 32,
-      "ctx_size": 1024,
-      "threads": 4,
-      "batch_size": 512,
-      "gpu_layers": 0,
-      "mlock": false,
-      "include_ppl": true,
-      "num_prompts": 8
-    },
-    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0",
-    "hardware_config": {
-      "threads": 4,
-      "ctx_size": 1024,
-      "gpu_layers": 0,
-      "batch_size": 512,
-      "mlock": false
-    },
-    "system_info": {
-      "device": "ARM Device",
-      "cpu": "8x arm",
-      "ram_gb": 16.0,
-      "ram_human": "16.0 GB RAM",
-      "os": "Darwin 25.2.0"
-    }
-  },
-  {
-    "model_name": "Qwen3-0.6B-f16:Q3_K_S",
-    "parameters": "0.6B",
-    "file_size_mb": 371.863525390625,
-    "avg_tokens_per_sec": 29.900000000000002,
-    "outliers_detected": 2,
-    "perplexity": null,
-    "peak_memory_mb": 571.125,
-    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-0.6B-f16",
-    "total_exec_time_sec": 20.35153579711914,
-    "per_prompt_results": [
-      {
-        "tokens_per_sec": 49.3,
-        "peak_memory_mb": 568.625,
-        "exec_time_sec": 2.156705856323242,
-        "is_outlier": true
-      },
-      {
-        "tokens_per_sec": 27.3,
-        "peak_memory_mb": 569.8125,
-        "exec_time_sec": 2.0919790267944336
-      },
-      {
-        "tokens_per_sec": 35.3,
-        "peak_memory_mb": 569.859375,
-        "exec_time_sec": 2.083745002746582
-      },
-      {
-        "tokens_per_sec": 29.6,
-        "peak_memory_mb": 569.796875,
-        "exec_time_sec": 2.0845391750335693
-      },
-      {
-        "tokens_per_sec": 30.8,
-        "peak_memory_mb": 571.125,
-        "exec_time_sec": 2.6036489009857178
-      },
-      {
-        "tokens_per_sec": 28.9,
-        "peak_memory_mb": 570.078125,
-        "exec_time_sec": 2.098554849624634
-      },
-      {
-        "tokens_per_sec": 10.5,
-        "peak_memory_mb": 569.8125,
-        "exec_time_sec": 4.6264660358428955,
-        "is_outlier": true
-      },
-      {
-        "tokens_per_sec": 27.5,
-        "peak_memory_mb": 570.25,
-        "exec_time_sec": 2.6058969497680664
-      }
-    ],
-    "date_checked": "2026-01-18T15:33:51.689944",
     "benchmark_config": {
       "n_predict": 32,
       "ctx_size": 1024,
