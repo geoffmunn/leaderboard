@@ -8755,58 +8755,17 @@
     }
   },
   {
-    "model_name": "Qwen3-14B-f16-imatrix:Q4_K_S",
+    "model_name": "Qwen3-14B-f16:Q4_K_HIFI",
     "parameters": "14B",
-    "file_size_mb": 8176.3038330078125,
+    "file_size_mb": 3889.254382133484,
     "avg_tokens_per_sec": 0.0,
     "outliers_detected": 0,
     "perplexity": null,
-    "peak_memory_mb": 7388.78125,
+    "peak_memory_mb": null,
     "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
-    "total_exec_time_sec": 42105.377294540405,
-    "per_prompt_results": [
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7370.76953125,
-        "exec_time_sec": 5495.604865074158
-      },
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7386.96875,
-        "exec_time_sec": 5336.808108329773
-      },
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7386.72265625,
-        "exec_time_sec": 5363.730693101883
-      },
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7388.78125,
-        "exec_time_sec": 5195.330375671387
-      },
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7382.84375,
-        "exec_time_sec": 5163.740675210953
-      },
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7375.5703125,
-        "exec_time_sec": 5180.884311437607
-      },
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7386.578125,
-        "exec_time_sec": 5112.732683897018
-      },
-      {
-        "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7382.59765625,
-        "exec_time_sec": 5256.545581817627
-      }
-    ],
-    "date_checked": "2026-01-23T10:12:30.484640",
+    "total_exec_time_sec": 0,
+    "per_prompt_results": [],
+    "date_checked": "2026-01-24T21:52:12.993344",
     "benchmark_config": {
       "n_predict": 32,
       "ctx_size": 1024,
@@ -8834,17 +8793,58 @@
     }
   },
   {
-    "model_name": "Qwen3-14B-f16:Q4_K_HIFI",
+    "model_name": "Qwen3-14B-f16-imatrix:Q4_K_S",
     "parameters": "14B",
-    "file_size_mb": 3889.254382133484,
+    "file_size_mb": 8176.3038330078125,
     "avg_tokens_per_sec": 0.0,
     "outliers_detected": 0,
     "perplexity": null,
-    "peak_memory_mb": null,
+    "peak_memory_mb": 7396.0703125,
     "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
-    "total_exec_time_sec": 0,
-    "per_prompt_results": [],
-    "date_checked": "2026-01-24T21:52:12.993344",
+    "total_exec_time_sec": 42856.297045469284,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7395.19921875,
+        "exec_time_sec": 5429.013852119446
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7385.30859375,
+        "exec_time_sec": 5328.495715141296
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7363.15625,
+        "exec_time_sec": 5202.539815187454
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7396.0703125,
+        "exec_time_sec": 5375.43861579895
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7392.16796875,
+        "exec_time_sec": 5398.620264530182
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7369.5078125,
+        "exec_time_sec": 5385.011906862259
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7368.33203125,
+        "exec_time_sec": 5289.588101387024
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7365.109375,
+        "exec_time_sec": 5447.588774442673
+      }
+    ],
+    "date_checked": "2026-01-25T23:50:24.398193",
     "benchmark_config": {
       "n_predict": 32,
       "ctx_size": 1024,
