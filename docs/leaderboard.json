@@ -8518,6 +8518,85 @@
     }
   },
   {
+    "model_name": "Qwen3-14B-f16:Q3_K_M",
+    "parameters": "14B",
+    "file_size_mb": 6982.148254394531,
+    "avg_tokens_per_sec": 0.325,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 7203.45703125,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
+    "total_exec_time_sec": 1401.6775815486908,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.5,
+        "peak_memory_mb": 7116.4453125,
+        "exec_time_sec": 148.48202776908875
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 7199.29296875,
+        "exec_time_sec": 143.7009575366974
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 7203.1171875,
+        "exec_time_sec": 159.8942048549652
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 7200.35546875,
+        "exec_time_sec": 171.04790139198303
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 7202.203125,
+        "exec_time_sec": 195.0921449661255
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 7203.45703125,
+        "exec_time_sec": 203.22496581077576
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 7201.99609375,
+        "exec_time_sec": 189.21295189857483
+      },
+      {
+        "tokens_per_sec": 0.3,
+        "peak_memory_mb": 7197.23046875,
+        "exec_time_sec": 191.02242732048035
+      }
+    ],
+    "date_checked": "2026-01-24T17:22:46.765520",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": false,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0 --no-ppl",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
     "model_name": "Qwen3-14B-f16-imatrix:Q3_K_HIFI",
     "parameters": "14B",
     "file_size_mb": 7139.1309814453125,
@@ -8913,58 +8992,254 @@
     }
   },
   {
+    "model_name": "Qwen3-14B-f16:Q4_K_HIFI",
+    "parameters": "14B",
+    "file_size_mb": 3889.254382133484,
+    "avg_tokens_per_sec": 0.0,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": null,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
+    "total_exec_time_sec": 0,
+    "per_prompt_results": [],
+    "date_checked": "2026-01-24T21:52:12.993344",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": false,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0 --no-ppl",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
     "model_name": "Qwen3-14B-f16-imatrix:Q4_K_S",
     "parameters": "14B",
     "file_size_mb": 8176.3038330078125,
     "avg_tokens_per_sec": 0.0,
     "outliers_detected": 0,
     "perplexity": null,
-    "peak_memory_mb": 7388.78125,
+    "peak_memory_mb": 7396.0703125,
     "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
-    "total_exec_time_sec": 42105.377294540405,
+    "total_exec_time_sec": 42856.297045469284,
     "per_prompt_results": [
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7370.76953125,
-        "exec_time_sec": 5495.604865074158
+        "peak_memory_mb": 7395.19921875,
+        "exec_time_sec": 5429.013852119446
       },
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7386.96875,
-        "exec_time_sec": 5336.808108329773
+        "peak_memory_mb": 7385.30859375,
+        "exec_time_sec": 5328.495715141296
       },
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7386.72265625,
-        "exec_time_sec": 5363.730693101883
+        "peak_memory_mb": 7363.15625,
+        "exec_time_sec": 5202.539815187454
       },
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7388.78125,
-        "exec_time_sec": 5195.330375671387
+        "peak_memory_mb": 7396.0703125,
+        "exec_time_sec": 5375.43861579895
       },
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7382.84375,
-        "exec_time_sec": 5163.740675210953
+        "peak_memory_mb": 7392.16796875,
+        "exec_time_sec": 5398.620264530182
       },
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7375.5703125,
-        "exec_time_sec": 5180.884311437607
+        "peak_memory_mb": 7369.5078125,
+        "exec_time_sec": 5385.011906862259
       },
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7386.578125,
-        "exec_time_sec": 5112.732683897018
+        "peak_memory_mb": 7368.33203125,
+        "exec_time_sec": 5289.588101387024
       },
       {
         "tokens_per_sec": 0.0,
-        "peak_memory_mb": 7382.59765625,
-        "exec_time_sec": 5256.545581817627
+        "peak_memory_mb": 7365.109375,
+        "exec_time_sec": 5447.588774442673
       }
     ],
-    "date_checked": "2026-01-23T10:12:30.484640",
+    "date_checked": "2026-01-25T23:50:24.398193",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": false,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0 --no-ppl",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
+    "model_name": "Qwen3-14B-f16:Q5_K_M",
+    "parameters": "14B",
+    "file_size_mb": 10027.475402832031,
+    "avg_tokens_per_sec": 0.0,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 7397.49609375,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
+    "total_exec_time_sec": 80591.71714234352,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7397.49609375,
+        "exec_time_sec": 10022.13652920723
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7396.7578125,
+        "exec_time_sec": 9874.482584238052
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7393.44921875,
+        "exec_time_sec": 10426.281002998352
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7247.703125,
+        "exec_time_sec": 10296.553129196167
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7383.8125,
+        "exec_time_sec": 10235.077213525772
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7387.03125,
+        "exec_time_sec": 9958.44827914238
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7390.15234375,
+        "exec_time_sec": 9752.963332653046
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7384.93359375,
+        "exec_time_sec": 10025.775071382523
+      }
+    ],
+    "date_checked": "2026-01-27T19:46:01.398832",
+    "benchmark_config": {
+      "n_predict": 32,
+      "ctx_size": 1024,
+      "threads": 4,
+      "batch_size": 512,
+      "gpu_layers": 0,
+      "mlock": false,
+      "include_ppl": false,
+      "num_prompts": 8
+    },
+    "benchmark_command": "--n-predict 32 --ctx-size 1024 --threads 4 --batch-size 512 --gpu-layers 0 --no-ppl",
+    "hardware_config": {
+      "threads": 4,
+      "ctx_size": 1024,
+      "gpu_layers": 0,
+      "batch_size": 512,
+      "mlock": false
+    },
+    "system_info": {
+      "device": "Raspberry Pi 4 Model B Rev 1.4",
+      "cpu": "4x Unknown",
+      "ram_gb": 7.6,
+      "ram_human": "7.6 GB RAM",
+      "os": "Linux 6.12.34+rpt-rpi-v8"
+    }
+  },
+  {
+    "model_name": "Qwen3-14B-f16:Q5_K_S",
+    "parameters": "14B",
+    "file_size_mb": 9788.412902832031,
+    "avg_tokens_per_sec": 0.0,
+    "outliers_detected": 0,
+    "perplexity": null,
+    "peak_memory_mb": 7370.78515625,
+    "huggingface_repo": "https://huggingface.co/geoffmunn/Qwen3-14B-f16",
+    "total_exec_time_sec": 77303.15782856941,
+    "per_prompt_results": [
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7361.640625,
+        "exec_time_sec": 9735.908663511276
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7348.8828125,
+        "exec_time_sec": 9781.432825803757
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7354.73046875,
+        "exec_time_sec": 9786.474287748337
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7364.92578125,
+        "exec_time_sec": 9491.3326420784
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7364.2265625,
+        "exec_time_sec": 9610.550380945206
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7370.78515625,
+        "exec_time_sec": 9626.86894416809
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7364.3203125,
+        "exec_time_sec": 9726.22521519661
+      },
+      {
+        "tokens_per_sec": 0.0,
+        "peak_memory_mb": 7361.83984375,
+        "exec_time_sec": 9544.364869117737
+      }
+    ],
+    "date_checked": "2026-01-28T19:23:42.017507",
     "benchmark_config": {
       "n_predict": 32,
       "ctx_size": 1024,
